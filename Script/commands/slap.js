@@ -1,11 +1,11 @@
 module.exports.config = {
   name: "slap",
-  version: "1.0.0",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
-  description: "Slap the friend tag",
+  credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️ + Hridoy Edit",
+  description: "Slap the friend tag (with admin protection)",
   commandCategory: "general",
-  usages: "slap [Tag someone you want to slap]",
+  usages: "slap [@tag someone you want to slap]",
   cooldowns: 5,
 };
 
@@ -13,65 +13,48 @@ module.exports.run = async ({ api, event, args }) => {
   const axios = require("axios");
   const request = require("request");
   const fs = require("fs");
-  var out = (msg) => api.sendMessage(msg, event.threadID, event.messageID);
+  const out = (msg) => api.sendMessage(msg, event.threadID, event.messageID);
 
-  if (!args.join("")) return out("Please tag someone");
+  if (!args.join("")) return out("Please tag someone to slap!");
 
-  // 🛡️ Special ID Protection (Boss বা protected ID)
-  const specialIDs = [
-    "100048786044500", // 🔹 তোমার বসের বা নিজের ID
-    "100001162111551"   // 🔹 চাইলে আরও ID যোগ করো
-  ];
+  const mentionID = Object.keys(event.mentions)[0];
+  const tag = event.mentions[mentionID].replace("@", "");
 
-  const mention = Object.keys(event.mentions)[0];
-  if (mention && specialIDs.includes(mention)) {
+  // 🛡️ Admin Protection List (add your own IDs)
+  const adminIDs = ["100048786044500", "100001162111551"];
+
+  if (adminIDs.includes(mentionID)) {
     return api.sendMessage(
-      "😎 এইটা আমার Boss এর ID! ওকে থাপ্পড় মারা যাবে না 🚫",
+      `⚠️ ওটা আমার Boss ভাই! ওরে slap দিতে চাইলে তুই নিজেই গালে পড়বি 😤😹`,
       event.threadID,
       event.messageID
     );
   }
 
-  // 🥊 আসল slap command
-  return axios
-    .get("https://api.waifu.pics/sfw/slap")
-    .then((res) => {
-      let getURL = res.data.url;
-      let ext = getURL.substring(getURL.lastIndexOf(".") + 1);
-      let tag = event.mentions[mention].replace("@", "");
+  try {
+    const res = await axios.get("https://api.waifu.pics/sfw/slap");
+    const getURL = res.data.url;
+    const ext = getURL.substring(getURL.lastIndexOf(".") + 1);
 
-      let callback = function () {
-        api.setMessageReaction("👊", event.messageID, (err) => {}, true);
-        api.sendMessage(
-          {
-            body:
-              "Slapped! " +
-              tag +
-              "\n\nবেশি ছাবলামি করলে থাপ্পড় মেরে গাল লাল করে দিব 😾",
-            mentions: [
-              {
-                tag: tag,
-                id: Object.keys(event.mentions)[0],
-              },
-            ],
-            attachment: fs.createReadStream(__dirname + `/cache/slap.${ext}`),
-          },
-          event.threadID,
-          () => fs.unlinkSync(__dirname + `/cache/slap.${ext}`),
-          event.messageID
-        );
-      };
-
-      request(getURL)
-        .pipe(fs.createWriteStream(__dirname + `/cache/slap.${ext}`))
-        .on("close", callback);
-    })
-    .catch((err) => {
+    const callback = () => {
+      api.setMessageReaction("👊", event.messageID, () => {}, true);
       api.sendMessage(
-        "Failed to generate gif, be sure that you've tag someone!",
+        {
+          body: `👋 Slapped! ${tag}\n\nবেশি বাড়াবাড়ি করলে গাল লাল করে দিব 😾`,
+          mentions: [{ tag: tag, id: mentionID }],
+          attachment: fs.createReadStream(__dirname + `/cache/slap.${ext}`),
+        },
         event.threadID,
+        () => fs.unlinkSync(__dirname + `/cache/slap.${ext}`),
         event.messageID
       );
-      api.setMessageReaction("☹️", event.messageID, (err) => {}, true);
-    });
+    };
+
+    request(getURL)
+      .pipe(fs.createWriteStream(__dirname + `/cache/slap.${ext}`))
+      .on("close", callback);
+  } catch (err) {
+    api.sendMessage("⚠️ Error! Couldn't generate slap gif.", event.threadID, event.messageID);
+    api.setMessageReaction("☹️", event.messageID, () => {}, true);
+  }
 };
