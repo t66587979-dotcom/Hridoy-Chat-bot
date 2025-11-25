@@ -1,14 +1,3 @@
-const { protectCheck } = require("./protect.js");
-
-module.exports.run = async function({ api, event, args, Users }) {
-  // 🛡️ Special ID Protection Check
-  const allowed = await protectCheck({ api, event, Users });
-  if (!allowed) return; // ⛔ command বন্ধ হবে
-
-  // 🎯 নিচে তোমার আসল command কোড
-  api.sendMessage("✅ Command executed successfully!", event.threadID);
-};
-
 module.exports.config = {
     name: "fuck",
     version: "3.1.1",

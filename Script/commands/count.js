@@ -1,67 +1,82 @@
-const limit = 20; // Number of members per page
-
+var limit = 20; //number of members per check
 module.exports.config = {
-  name: "count",
-  version: "1.8.1",
-  hasPermssion: 0,
-  credits: "Hridoy Khan",
-  description: "Check group message interactions or ranking",
-  commandCategory: "group",
-  usages: "[all | tag | reply]",
-  cooldowns: 5
+	name: "count",
+	version: "1.8.0",
+	hasPermssion: 0,
+	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
+	description: "Check group interactions",
+	commandCategory: "Group",
+	usages: "[all/tag]",
+	cooldowns: 5
 };
 
-module.exports.run = async function ({ args, Users, Threads, api, event, Currencies }) {
-  const mention = Object.keys(event.mentions);
-  const { threadID, senderID, type } = event;
-  const threadInfo = (await Threads.getData(threadID)).threadInfo;
-  const listUserID = threadInfo.participantIDs;
-  const exp = [];
+module.exports.run = async function ({ args,Users,Threads, api, event, Currencies, getText }) {
+var mention = Object.keys(event.mentions);
+        if (args[0] == "all") {
+            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
+            //const countMess = (await Currencies.getData(event.senderID)).exp
+            const listUserID = event.participantIDs
+            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
+            var number = 1, msg = "", storage = [], exp = [];
 
-  // Fetch all users and their exp
-  for (const idUser of listUserID) {
-    const userData = await Users.getData(idUser);
-    const countMess = await Currencies.getData(idUser);
-    exp.push({
-      name: userData?.name || "Unknown",
-      exp: countMess?.exp || 0,
-      uid: idUser
-    });
-  }
+            
+            for(const idUser of listUserID) {
 
-  // Sort by exp descending
-  exp.sort((a, b) => b.exp - a.exp);
+            const countMess = await Currencies.getData(idUser);
+            exp.push({"name" : (typeof ((await Users.getData(idUser)).name) == "undefined") ? 0 : (await Users.getData(idUser)).name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
+        }
+            exp.sort(function (a, b) { return b.exp - a.exp });
 
-  // =============== CASE 1: "all" command ===============
-  if (args[0] === "all") {
-    let page = parseInt(args[1]) || 1;
-    const numPage = Math.ceil(exp.length / limit);
-    if (page < 1) page = 1;
-    if (page > numPage) page = numPage;
+            var page = 1;
+            page = parseInt(args[1]) || 1;
+            page < -1 ? page = 1 : "";
+            
+            var msg = "\n\n";
+            var numPage = Math.ceil(exp.length/limit);
 
-    let msg = `🏆 Group Message Leaderboard 🏆\n\n`;
-    for (let i = limit * (page - 1); i < limit * page && i < exp.length; i++) {
-      const user = exp[i];
-      msg += `${i + 1}. ${user.name} — ${user.exp} messages\n`;
-    }
+            for(var i = limit*(page - 1); i < limit*(page-1) + limit; i++){
+                if(i >= exp.length) break;
+                let dataInfo = exp[i];
+                msg += `${i+1}.${dataInfo.name}: ${dataInfo.exp} messages\n`
+            }
 
-    msg += `\n📄 Page ${page}/${numPage}\n💡 Use "${global.config.PREFIX}count all [page]" to see more.`;
-    return api.sendMessage(msg, threadID);
-  }
-
-  // =============== CASE 2: tag someone ===============
-  let targetID = senderID;
-  if (mention.length > 0) targetID = mention[0];
-  if (type === "message_reply") targetID = event.messageReply.senderID;
-
-  // Find rank
-  const rank = exp.findIndex(u => u.uid === targetID) + 1;
-  const infoUser = exp[rank - 1];
-  const targetName = (await Users.getData(targetID))?.name || "Unknown";
-
-  if (targetID === senderID && mention.length === 0 && type !== "message_reply") {
-    return api.sendMessage(`🏅 You are ranked ${rank} with ${infoUser.exp} messages.`, threadID);
-  } else {
-    return api.sendMessage(`🏅 ${targetName} is ranked ${rank} with ${infoUser.exp} messages.`, threadID);
-  }
-};
+            msg += `\nPage ${page}/${numPage}\nUse ${global.config.PREFIX}check all page numbers`
+            return api.sendMessage(msg, event.threadID);
+        }        
+    else    
+    if(event.type == "message_reply") { mention[0] = event.messageReply.senderID }
+    if (mention[0]) {
+            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
+            //const countMess = (await Currencies.getData(event.senderID)).exp
+            const listUserID = event.participantIDs
+            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
+            exp = [];
+            //var name = await Users.getData(id)
+            for(const idUser of listUserID) {
+            const countMess = await Currencies.getData(idUser);
+            exp.push({"name" : idUser.name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
+        }
+            exp.sort(function (a, b) { return b.exp - a.exp });
+            const rank = exp.findIndex(info => parseInt(info.uid) == parseInt(mention[0])) + 1;
+            const infoUser = exp[rank - 1];
+            //const rank = exp.findIndex(info => parseInt(info.listUserID) == parseInt(event.senderID)) + 1;
+            return api.sendMessage(`${(await Users.getData(mention[0])).name} currently ranked ${rank} with ${infoUser.exp} messages`, event.threadID, event.messageID);
+}
+else {
+            var { participantIDs } =(await Threads.getData(event.threadID)).threadInfo;
+            //const countMess = (await Currencies.getData(event.senderID)).exp
+            const listUserID = event.participantIDs
+            var id = listUserID //[Math.floor(Math.random() * listUserID.length)];
+            exp = [];
+            var name = await Users.getData(id)
+            for(const idUser of listUserID) {
+            const countMess = await Currencies.getData(idUser);
+            exp.push({"name" : idUser.name, "exp": (typeof countMess.exp == "undefined") ? 0 : countMess.exp, "uid": idUser});
+        }
+            exp.sort(function (a, b) { return b.exp - a.exp });
+            const rank = exp.findIndex(info => parseInt(info.uid) == parseInt(event.senderID)) + 1;
+            const infoUser = exp[rank - 1];
+          
+            return api.sendMessage(`You are ranked ${rank} with ${infoUser.exp} messages`, event.threadID, event.messageID);
+}
+}
