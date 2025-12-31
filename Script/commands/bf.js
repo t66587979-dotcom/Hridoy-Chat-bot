@@ -15,41 +15,46 @@ module.exports.config = {
  }
 };
 
-module.exports.onLoad = async() => {
- const { resolve } = global.nodemodule["path"];
- const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
- const { downloadFile } = global.utils;
- const dirMaterial = __dirname + `/cache/canvas/`;
- const path = resolve(__dirname, 'cache/canvas', 'arr2.png');
- if (!existsSync(dirMaterial)) mkdirSync(dirMaterial, { recursive: true });
- if (!existsSync(path)) await downloadFile("https://i.imgur.com/iaOiAXe.jpeg", path); 
-}
-
 async function makeImage({ one, two }) {
  const fs = global.nodemodule["fs-extra"];
  const path = global.nodemodule["path"];
  const axios = global.nodemodule["axios"]; 
  const jimp = global.nodemodule["jimp"];
- const __root = path.resolve(__dirname, "cache", "canvas");
 
- let batgiam_img = await jimp.read(__root + "/arr2.png");
- let pathImg = __root + `/batman_${one}_${two}.png`;
- let avatarOne = __root + `/avt_${one}.png`;
- let avatarTwo = __root + `/avt_${two}.png`;
+ const cachePath = path.resolve(__dirname, "cache");
+ if (!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
+
+ // ✅ DIRECT BACKGROUND IMAGE LINK
+ let batgiam_img = await jimp.read("https://i.imgur.com/iaOiAXe.jpeg");
+
+ let pathImg = `${cachePath}/bf_${one}_${two}.png`;
+ let avatarOne = `${cachePath}/avt_${one}.png`;
+ let avatarTwo = `${cachePath}/avt_${two}.png`;
  
- let getAvatarOne = (await axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
- fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
+ // ✅ FB PFP WITH ACCESS TOKEN (FIX)
+ let getAvatarOne = (await axios.get(
+   `https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+   { responseType: "arraybuffer" }
+ )).data;
+ fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, "utf-8"));
  
- let getAvatarTwo = (await axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
- fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
+ let getAvatarTwo = (await axios.get(
+   `https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+   { responseType: "arraybuffer" }
+ )).data;
+ fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, "utf-8"));
  
  let circleOne = await jimp.read(await circle(avatarOne));
  let circleTwo = await jimp.read(await circle(avatarTwo));
- batgiam_img.composite(circleOne.resize(200, 200), 70, 110).composite(circleTwo.resize(200, 200), 465, 110);
+
+ // ❌ position / size unchanged
+ batgiam_img
+   .composite(circleOne.resize(200, 200), 70, 110)
+   .composite(circleTwo.resize(200, 200), 465, 110);
  
  let raw = await batgiam_img.getBufferAsync("image/png");
- 
  fs.writeFileSync(pathImg, raw);
+
  fs.unlinkSync(avatarOne);
  fs.unlinkSync(avatarTwo);
  
@@ -63,22 +68,27 @@ async function circle(image) {
  return await image.getBufferAsync("image/png");
 }
 
-module.exports.run = async function ({ event, api, args }) { 
+module.exports.run = async function ({ event, api }) { 
  const fs = global.nodemodule["fs-extra"];
  const { threadID, messageID, senderID } = event;
  const mention = Object.keys(event.mentions);
- if (!mention[0]) return api.sendMessage("Please mention 1 person.", threadID, messageID);
- else {
+
+ if (!mention[0])
+   return api.sendMessage("Please mention 1 person.", threadID, messageID);
+
  const one = senderID, two = mention[0];
- return makeImage({ one, two }).then(path => api.sendMessage({
- body: "╔═════❖••° °••❖═════╗\n" +
+
+ return makeImage({ one, two }).then(path =>
+   api.sendMessage({
+     body:
+ "╔═════❖••° °••❖═════╗\n" +
  " ভালোবাসার সেরা জুটি 💘\n" +
  "╚═════❖••° °••❖═════╝\n\n" +
  " ✶⊶⊷⊷⊷⊷❍⊶⊷⊷⊷⊷✶\n" +
  " 👑 এই নে! এখন থেকে শুধু তোরই ❤️\n" +
  " 💌 তোর একমাত্র বয়ফ্রেন্ড হাজির 🩷\n" +
  " ✶⊶⊷⊷⊷⊷❍⊶⊷⊷⊷⊷✶",
- attachment: fs.createReadStream(path)
- }, threadID, () => fs.unlinkSync(path), messageID));
- }
-}
+     attachment: fs.createReadStream(path)
+   }, threadID, () => fs.unlinkSync(path), messageID)
+ );
+};

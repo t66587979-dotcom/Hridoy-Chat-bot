@@ -15,37 +15,43 @@ module.exports.config = {
     }
 };
 
-module.exports.onLoad = async() => {
-    const { resolve } = global.nodemodule["path"];
-    const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
-    const { downloadFile } = global.utils;
-    const dirMaterial = __dirname + `/cache/canvas/`;
-    const path = resolve(__dirname, 'cache/canvas', 'seophi.png');
-    if (!existsSync(dirMaterial + "canvas")) mkdirSync(dirMaterial, { recursive: true });
-    if (!existsSync(path)) await downloadFile("https://i.imgur.com/hmKmmam.jpg", path);
-}
-
 async function makeImage({ one, two }) {
     const fs = global.nodemodule["fs-extra"];
     const path = global.nodemodule["path"];
     const axios = global.nodemodule["axios"]; 
     const jimp = global.nodemodule["jimp"];
-    const __root = path.resolve(__dirname, "cache", "canvas");
+    const __root = path.resolve(__dirname, "cache");
 
-    let batgiam_img = await jimp.read(__root + "/seophi.png");
-    let pathImg = __root + `/batman${one}_${two}.png`;
-    let avatarOne = __root + `/avt_${one}.png`;
-    let avatarTwo = __root + `/avt_${two}.png`;
+    if (!fs.existsSync(__root)) fs.mkdirSync(__root, { recursive: true });
+
+    // ✅ DIRECT IMAGE LINK
+    let batgiam_img = await jimp.read("https://i.imgur.com/hmKmmam.jpg");
+
+    let pathImg = `${__root}/couple_${one}_${two}.png`;
+    let avatarOne = `${__root}/avt_${one}.png`;
+    let avatarTwo = `${__root}/avt_${two}.png`;
     
-    let getAvatarOne = (await axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
+    // FB PFP WITH ACCESS TOKEN
+    let getAvatarOne = (await axios.get(
+        `https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+        { responseType: 'arraybuffer' }
+    )).data;
     fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
     
-    let getAvatarTwo = (await axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
+    let getAvatarTwo = (await axios.get(
+        `https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`,
+        { responseType: 'arraybuffer' }
+    )).data;
     fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
     
     let circleOne = await jimp.read(await circle(avatarOne));
     let circleTwo = await jimp.read(await circle(avatarTwo));
-    batgiam_img.resize(1024, 712).composite(circleOne.resize(200, 200), 527, 141).composite(circleTwo.resize(200, 200), 389, 407);
+
+    // ❌ position / size same
+    batgiam_img
+        .resize(1024, 712)
+        .composite(circleOne.resize(200, 200), 527, 141)
+        .composite(circleTwo.resize(200, 200), 389, 407);
     
     let raw = await batgiam_img.getBufferAsync("image/png");
     
@@ -55,6 +61,7 @@ async function makeImage({ one, two }) {
     
     return pathImg;
 }
+
 async function circle(image) {
     const jimp = require("jimp");
     image = await jimp.read(image);
@@ -62,19 +69,20 @@ async function circle(image) {
     return await image.getBufferAsync("image/png");
 }
 
-module.exports.run = async function ({ event, api, args }) {
+module.exports.run = async function ({ event, api }) {
     const fs = global.nodemodule["fs-extra"];
     const { threadID, messageID, senderID } = event;
-    var mention = Object.keys(event.mentions)[0]
-    let tag = event.mentions[mention].replace("@", "");
+    var mention = Object.keys(event.mentions)[0];
     if (!mention) return api.sendMessage("Vui lòng tag 1 người", threadID, messageID);
-    else {
-        var one = senderID, two = mention;
-        return makeImage({ one, two }).then(path => api.sendMessage({ body: "Ship ",
-            mentions: [{
-          tag: tag,
-          id: mention
-        }],
-     attachment: fs.createReadStream(path) }, threadID, () => fs.unlinkSync(path), messageID));
-    }
-}
+
+    let tag = event.mentions[mention].replace("@", "");
+    var one = senderID, two = mention;
+
+    return makeImage({ one, two }).then(path =>
+        api.sendMessage({
+            body: "Ship 💖",
+            mentions: [{ tag: tag, id: mention }],
+            attachment: fs.createReadStream(path)
+        }, threadID, () => fs.unlinkSync(path), messageID)
+    );
+};

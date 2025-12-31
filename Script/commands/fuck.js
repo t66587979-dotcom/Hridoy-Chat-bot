@@ -10,19 +10,8 @@ module.exports.config = {
     dependencies: {
         "axios": "",
         "fs-extra": "",
-        "path": "",
         "jimp": ""
     }
-};
-
-module.exports.onLoad = async () => {
-    const { resolve } = global.nodemodule["path"];
-    const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
-    const { downloadFile } = global.utils;
-    const dirMaterial = __dirname + `/cache/canvas/`;
-    const path = resolve(__dirname, 'cache/canvas', 'fucksv5.png');
-    if (!existsSync(dirMaterial + "canvas")) mkdirSync(dirMaterial, { recursive: true });
-    if (!existsSync(path)) await downloadFile("https://i.ibb.co/VJHCjCb/images-2022-08-14-T183802-542.jpg", path);
 };
 
 async function makeImage({ one, two }) {
@@ -30,9 +19,12 @@ async function makeImage({ one, two }) {
     const path = global.nodemodule["path"];
     const axios = global.nodemodule["axios"]; 
     const jimp = global.nodemodule["jimp"];
-    const __root = path.resolve(__dirname, "cache", "canvas");
 
-    let batgiam_img = await jimp.read(__root + "/fucksv5.png");
+    // সরাসরি online image লিংক ব্যবহার
+    let batgiam_img = await jimp.read("https://i.ibb.co/VJHCjCb/images-2022-08-14-T183802-542.jpg");
+    const __root = path.resolve(__dirname, "cache", "canvas");
+    if (!fs.existsSync(__root)) fs.mkdirSync(__root, { recursive: true });
+
     let pathImg = __root + `/batman${one}_${two}.png`;
     let avatarOne = __root + `/avt_${one}.png`;
     let avatarTwo = __root + `/avt_${two}.png`;
@@ -45,6 +37,7 @@ async function makeImage({ one, two }) {
     
     let circleOne = await jimp.read(await circle(avatarOne));
     let circleTwo = await jimp.read(await circle(avatarTwo));
+
     batgiam_img.composite(circleOne.resize(1, 1), 1, 1).composite(circleTwo.resize(150, 150), 460, 20);
     
     let raw = await batgiam_img.getBufferAsync("image/png");

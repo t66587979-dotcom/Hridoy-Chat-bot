@@ -15,65 +15,39 @@ module.exports.config = {
  }
 };
 
-module.exports.onLoad = async () => {
- const { resolve } = global.nodemodule["path"];
- const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
- const { downloadFile } = global.utils;
- const dirMaterial = __dirname + `/cache/canvas/`;
- const path = resolve(__dirname, 'cache/canvas', 'batgiam.png');
- const fallbackAvatar = resolve(__dirname, 'cache/canvas', 'default_avatar.png');
-
- if (!existsSync(dirMaterial)) mkdirSync(dirMaterial, { recursive: true });
-
- 
- if (!existsSync(path)) {
- await downloadFile("https://i.imgur.com/ep1gG3r.png", path);
- }
-
- 
- if (!existsSync(fallbackAvatar)) {
- await downloadFile("https://i.imgur.com/u7b9H4F.png", fallbackAvatar); // Example fallback avatar
- }
-};
+// ❌ onLoad পুরো remove (local image দরকার নাই)
 
 async function makeImage({ one, two }) {
  const fs = global.nodemodule["fs-extra"];
  const path = global.nodemodule["path"];
  const axios = global.nodemodule["axios"];
  const jimp = global.nodemodule["jimp"];
- const __root = path.resolve(__dirname, "cache", "canvas");
- const fallbackAvatar = path.resolve(__root, "default_avatar.png");
 
- let batgiam_img = await jimp.read(__root + "/batgiam.png");
+ const cachePath = path.resolve(__dirname, "cache");
+ if (!fs.existsSync(cachePath)) fs.mkdirSync(cachePath, { recursive: true });
+
+ // ✅ DIRECT IMAGE LINK (no local file)
+ let batgiam_img = await jimp.read("https://i.imgur.com/SRuMrVG.jpeg");
 
  const randomID = Math.floor(Math.random() * 999999);
- let pathImg = `${__root}/batgiam_${randomID}.png`;
- let avatarOne = `${__root}/avt_${one}_${randomID}.png`;
- let avatarTwo = `${__root}/avt_${two}_${randomID}.png`;
+ let pathImg = `${cachePath}/batgiam_${randomID}.png`;
+ let avatarOne = `${cachePath}/avt_${one}_${randomID}.png`;
+ let avatarTwo = `${cachePath}/avt_${two}_${randomID}.png`;
 
- // Public profile picture (tokenless)
  const avatarUrlOne = `https://graph.facebook.com/${one}/picture?width=512&height=512`;
  const avatarUrlTwo = `https://graph.facebook.com/${two}/picture?width=512&height=512`;
 
- // Try download, use fallback if fail
- try {
- const getAvatarOne = (await axios.get(avatarUrlOne, { responseType: 'arraybuffer' })).data;
- fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
- } catch (e) {
- fs.copyFileSync(fallbackAvatar, avatarOne);
- }
+ const getAvatarOne = (await axios.get(avatarUrlOne, { responseType: "arraybuffer" })).data;
+ fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, "utf-8"));
 
- try {
- const getAvatarTwo = (await axios.get(avatarUrlTwo, { responseType: 'arraybuffer' })).data;
- fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
- } catch (e) {
- fs.copyFileSync(fallbackAvatar, avatarTwo);
- }
+ const getAvatarTwo = (await axios.get(avatarUrlTwo, { responseType: "arraybuffer" })).data;
+ fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, "utf-8"));
 
  let circleOne = await jimp.read(await circle(avatarOne));
  let circleTwo = await jimp.read(await circle(avatarTwo));
 
- batgiam_img.resize(500, 500)
+ batgiam_img
+ .resize(500, 500)
  .composite(circleOne.resize(100, 100), 375, 9)
  .composite(circleTwo.resize(100, 100), 160, 92);
 
@@ -93,12 +67,16 @@ async function circle(image) {
  return await image.getBufferAsync("image/png");
 }
 
-module.exports.run = async function ({ event, api, args }) {
+module.exports.run = async function ({ event, api }) {
  const fs = global.nodemodule["fs-extra"];
  const { threadID, messageID, senderID } = event;
 
  if (!event.mentions || Object.keys(event.mentions).length === 0)
- return api.sendMessage("বলদ একজনকে ট্যাগ করতে হবে 🌚🌝", threadID, messageID);
+ return api.sendMessage(
+ "বলদ 😑 একজনকে ট্যাগ না করলে arrest কাজ করবে নাকি?",
+ threadID,
+ messageID
+ );
 
  var mention = Object.keys(event.mentions)[0];
  let tag = event.mentions[mention].replace("@", "");
@@ -106,7 +84,9 @@ module.exports.run = async function ({ event, api, args }) {
 
  return makeImage({ one, two }).then(path =>
  api.sendMessage({
- body: `হালা মুরগী চোর তোরে আজকে হাতে নাতে ধরছি পালাবি কই 😹🕵️‍♂️\n=> ${tag}`,
+ body: `হালা মুরগী চোর 🐔🚨  
+আজকে তোর পালানোর সব রাস্তা বন্ধ 😹  
+=> ${tag}`,
  mentions: [{
  tag: tag,
  id: mention
