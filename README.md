@@ -7,7 +7,7 @@
 
 
 Assalamualaikum Everyone!  
-**Welcome to My 𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍 Fork!**
+**Welcome to My GitHub Fork!**
 
 ![Box-shaped Image](https://i.imgur.com/0IKTM64.jpeg)
 
