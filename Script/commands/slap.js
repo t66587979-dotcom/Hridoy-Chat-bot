@@ -25,7 +25,7 @@ module.exports.run = async ({ api, event, args }) => {
 
   if (adminIDs.includes(mentionID)) {
     return api.sendMessage(
-      `⚠️ ওটা আমার Boss ভাই! ওরে slap দিতে চাইলে তুই নিজেই গালে পড়বি 😤😹`,
+      `⚠️ ওটা আমার Boss ভাই! ওরে slap দিতে চাইলে তোর নিজেই গালে পড়বে। 😤😹`,
       event.threadID,
       event.messageID
     );
