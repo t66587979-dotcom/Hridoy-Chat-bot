@@ -1,75 +1,77 @@
+const fs = require("fs-extra");
+const path = require("path");
+const axios = require("axios");
+const jimp = require("jimp");
+
 module.exports.config = {
     name: "married2",
     version: "3.1.1",
     hasPermssion: 0,
-    credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
-    description: "married",
+    credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
+    description: "Send a married frame to someone",
     commandCategory: "img",
     usages: "[@mention]",
-    cooldowns: 5,
-    dependencies: {
-        "axios": "",
-        "fs-extra": "",
-        "path": "",
-        "jimp": ""
-    }
+    cooldowns: 5
 };
 
-module.exports.onLoad = async () => {
-    const { resolve } = global.nodemodule["path"];
-    const { existsSync, mkdirSync } = global.nodemodule["fs-extra"];
-    const { downloadFile } = global.utils;
-    const dirMaterial = __dirname + `/cache/canvas/`;
-    const path = resolve(__dirname, 'cache/canvas', 'marriedv3.png');
-    if (!existsSync(dirMaterial)) mkdirSync(dirMaterial, { recursive: true });
-    if (!existsSync(path)) await downloadFile("https://i.ibb.co/5TwSHpP/Guardian-Place-full-1484178.jpg", path);
-};
+async function circle(image) {
+    const img = await jimp.read(image);
+    img.circle();
+    return await img.getBufferAsync("image/png");
+}
 
 async function makeImage({ one, two }) {
-    const fs = global.nodemodule["fs-extra"];
-    const path = global.nodemodule["path"];
-    const axios = global.nodemodule["axios"];
-    const jimp = global.nodemodule["jimp"];
-    const __root = path.resolve(__dirname, "cache", "canvas");
+    const cacheDir = path.join(__dirname, "cache", "canvas");
+    if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
 
-    let married_img = await jimp.read(__root + "/marriedv3.png");
-    let pathImg = __root + `/married_${one}_${two}.png`;
-    let avatarOne = __root + `/avt_${one}.png`;
-    let avatarTwo = __root + `/avt_${two}.png`;
+    const bgPath = path.join(cacheDir, "marriedv3.png");
+    if (!fs.existsSync(bgPath)) {
+        const url = "https://i.ibb.co/5TwSHpP/Guardian-Place-full-1484178.jpg";
+        const data = (await axios.get(url, { responseType: "arraybuffer" })).data;
+        fs.writeFileSync(bgPath, Buffer.from(data));
+    }
 
-    let getAvatarOne = (await axios.get(`https://graph.facebook.com/${one}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
-    fs.writeFileSync(avatarOne, Buffer.from(getAvatarOne, 'utf-8'));
+    const married_img = await jimp.read(bgPath);
+    const pathImg = path.join(cacheDir, `married_${one}_${two}.png`);
+    const avatarOnePath = path.join(cacheDir, `avt_${one}.png`);
+    const avatarTwoPath = path.join(cacheDir, `avt_${two}.png`);
 
-    let getAvatarTwo = (await axios.get(`https://graph.facebook.com/${two}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`, { responseType: 'arraybuffer' })).data;
-    fs.writeFileSync(avatarTwo, Buffer.from(getAvatarTwo, 'utf-8'));
+    const getAvatar = async (uid, filePath) => {
+        const url = `https://graph.facebook.com/${uid}/picture?width=512&height=512&access_token=6628568379|c1e620fa708a1d5696fb991c1bde5662`;
+        const data = (await axios.get(url, { responseType: "arraybuffer" })).data;
+        fs.writeFileSync(filePath, Buffer.from(data));
+    };
 
-    let circleOne = await jimp.read(await circle(avatarOne));
-    let circleTwo = await jimp.read(await circle(avatarTwo));
-    married_img.composite(circleOne.resize(90, 90), 250, 1).composite(circleTwo.resize(90, 90), 350, 70);
+    await getAvatar(one, avatarOnePath);
+    await getAvatar(two, avatarTwoPath);
 
-    let raw = await married_img.getBufferAsync("image/png");
+    const circleOne = await jimp.read(await circle(avatarOnePath));
+    const circleTwo = await jimp.read(await circle(avatarTwoPath));
 
-    fs.writeFileSync(pathImg, raw);
-    fs.unlinkSync(avatarOne);
-    fs.unlinkSync(avatarTwo);
+    // Composite avatars on background
+    married_img
+        .composite(circleOne.resize(90, 90), 250, 1)
+        .composite(circleTwo.resize(90, 90), 350, 70);
+
+    const finalBuffer = await married_img.getBufferAsync("image/png");
+    fs.writeFileSync(pathImg, finalBuffer);
+
+    fs.unlinkSync(avatarOnePath);
+    fs.unlinkSync(avatarTwoPath);
 
     return pathImg;
 }
 
-async function circle(image) {
-    const jimp = require("jimp");
-    image = await jimp.read(image);
-    image.circle();
-    return await image.getBufferAsync("image/png");
-}
+module.exports.run = async function ({ event, api }) {
+    const { threadID, messageID, senderID, mentions } = event;
+    const mention = Object.keys(mentions)[0];
 
-module.exports.run = async function ({ event, api, args }) {
-    const fs = global.nodemodule["fs-extra"];
-    const { threadID, messageID, senderID } = event;
-    const mention = Object.keys(event.mentions || {});
+    if (!mention) return api.sendMessage("Please mention 1 person.", threadID, messageID);
+
+    const one = senderID, two = mention;
 
     const captions = [
-        "💟ღــ💘তোমার ভালোবাসা, আমার জীবনের সবথেকে বড় উপহার।💘ღــ💟",
+        "💟ღ──💘তোমার ভালোবাসা, আমার জীবনের সবথেকে বড় উপহার।💘──💟",
         "তোমার চোখে তাকালেই আমার যে একটা পৃথিবীর আছে সেটা আমি সবকিছু ভুলে যাই!💚❤️‍🩹💞",
         "তুমি আমার জীবনের সেই গল্প, যেই গল্প আমি কোন দিন শেষ করতে চাই না!🥰😘🌻",
         "I am so lucky person! তোমার মতো একজন ভালোবাসায়ী মানুষ আমার জীবন সঙ্গী হিসাবে পেয়ে!❤️‍🩹💞🌺",
@@ -83,9 +85,6 @@ module.exports.run = async function ({ event, api, args }) {
         "আমার জীবনে সুখ-শান্তি লাগবে না, আমি শুধু তোমাকে চাই!🌼"
     ];
 
-    if (!mention[0]) return api.sendMessage("Please mention 1 person.", threadID, messageID);
-
-    const one = senderID, two = mention[0];
     const caption = captions[Math.floor(Math.random() * captions.length)];
 
     try {
@@ -95,6 +94,7 @@ module.exports.run = async function ({ event, api, args }) {
             attachment: fs.createReadStream(path)
         }, threadID, () => fs.unlinkSync(path), messageID);
     } catch (err) {
+        console.error(err);
         return api.sendMessage("ছবি তৈরি করতে সমস্যা হয়েছে।", threadID, messageID);
     }
 };

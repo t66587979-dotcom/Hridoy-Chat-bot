@@ -1,59 +1,73 @@
 const axios = require("axios");
 
-module.exports.config = {
-  name: "prompt",
-  version: "1.0.0",
-  hasPermssion: 0,
-  credits: "SHAHADAT SAHU",
-  description: "Generate precise prompt from replied image",
-  commandCategory: "ai",
-  usages: "[reply image]",
-  cooldowns: 3
-};
+const configUrl = "https://raw.githubusercontent.com/aryannix/stuffs/master/raw/apis.json";
 
-module.exports.run = async function ({ api, event, args }) {
-  try {
-    const API_HUB = "https://raw.githubusercontent.com/shahadat-sahu/SAHU-API/main/SAHU-API.json";
+module.exports = {
+  config: {
+    name: "prompt",
+    aliases: ["p"],
+    version: "0.0.1",
+    role: 0,
+    author: "ArYAN",
+    category: "ai",
+    cooldowns: 5,
+    guide: { en: "Reply to an image to generate Midjourney prompt" }
+  },
 
-    if (!event.messageReply || !event.messageReply.attachments) {
-      return api.sendMessage("Please reply to a photo.....", event.threadID, event.messageID);
-    }
+  onStart: async ({ api, event }) => {
+    const { threadID, messageID, messageReply } = event;
 
-    const attachment = event.messageReply.attachments[0];
-    if (attachment.type !== "photo") {
-      return api.sendMessage("Please reply to a photo.....", event.threadID, event.messageID);
-    }
-    let promptURL;
+    let baseApi;
     try {
-      const hub = await axios.get(API_HUB);
-      promptURL = hub.data.prompt; 
-
-      if (!promptURL) {
-        return api.sendMessage("Prompt API missing......", event.threadID, event.messageID);
-      }
-    } catch (err) {
-      return api.sendMessage("Failed to load........", event.threadID, event.messageID);
+      const configRes = await axios.get(configUrl);
+      baseApi = configRes.data && configRes.data.api;
+      if (!baseApi) throw new Error("Configuration Error: Missing API in GitHub JSON.");
+    } catch (error) {
+      return api.sendMessage("❌ Failed to fetch API configuration from GitHub.", threadID, messageID);
     }
 
-    const imgURL = attachment.url;
-    const guideText =
-      "Generate an ultra-accurate prompt that can recreate this image exactly. Describe only what is visible: subject, face, body, pose, expression, clothing, environment, background details, lighting, colors, textures, camera angle, and important visual elements. No creativity, no assumptions. Short if possible, longer only if required for accuracy.";
+    if (
+      !messageReply ||
+      !messageReply.attachments ||
+      messageReply.attachments.length === 0 ||
+      !messageReply.attachments[0].url
+    ) {
+      return api.sendMessage("Please reply to an image.", threadID, messageID);
+    }
 
-    const imgBuffer = await axios.get(imgURL, { responseType: "arraybuffer" });
-    const base64 = Buffer.from(imgBuffer.data).toString("base64");
-    const res = await axios.post(promptURL, {
-      image: base64,
-      guide: guideText
-    });
+    try {
+      api.setMessageReaction("⏰", messageID, () => {}, true);
 
-    const output = res.data?.output || "No prompt generated.";
-    return api.sendMessage(output, event.threadID, event.messageID);
+      const imageUrl = messageReply.attachments[0].url;
+      const apiUrl = `${baseApi}/promptv2`;
 
-  } catch (err) {
-    return api.sendMessage(
-      "API Error Boss SAHU re Dakh😹: " + err.message,
-      event.threadID,
-      event.messageID
-    );
+      const apiResponse = await axios.get(apiUrl, {
+        params: { imageUrl }
+      });
+
+      const result = apiResponse.data;
+
+      if (!result.success) {
+        throw new Error(result.message || "Prompt API failed.");
+      }
+
+      const promptText = result.prompt || "No prompt returned.";
+
+      await api.sendMessage(
+        { body: `${promptText}` },
+        threadID,
+        messageID
+      );
+
+      api.setMessageReaction("✅", messageID, () => {}, true);
+    } catch (e) {
+      api.setMessageReaction("❌", messageID, () => {}, true);
+
+      let msg = "Error while generating prompt.";
+      if (e.response?.data?.error) msg = e.response.data.error;
+      else if (e.message) msg = e.message;
+
+      api.sendMessage(msg, threadID, messageID);
+    }
   }
 };
