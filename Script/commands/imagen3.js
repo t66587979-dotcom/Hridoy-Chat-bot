@@ -1,97 +1,79 @@
-const axios = require('axios');
-const fs = require('fs-extra'); 
-const path = require('path');
+const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
 
-const API_ENDPOINT = "https://dev.oculux.xyz/api/imagen3"; 
+const API_ENDPOINT = "https://dev.oculux.xyz/api/imagen3";
+const CACHE_DIR = path.join(__dirname, "cache");
 
 module.exports = {
   config: {
     name: "imagen3",
     aliases: ["img3", "generate3"],
-    version: "1.1", 
-    author: "NeoKEX",
-    countDown: 15,
-    role: 0,
-    longDescription: "Generate a new image using the Imagen3 model.",
-    category: "ai-image",
-    guide: {
-      en: "{pn} <prompt>"
-    }
+    version: "1.1",
+    credits: "NeoKEX",
+    cooldowns: 15,
+    hasPermission: 0,
+    description: "Generate image using Imagen3 AI",
+    commandCategory: "ai-image",
+    usages: "{pn} <english prompt>"
   },
 
-  onStart: async function({ message, args, event }) {
-    
-    let prompt = args.join(" ");
+  run: async function ({ api, event, args }) {
+    const { threadID, messageID } = event;
+    const prompt = args.join(" ").trim();
 
     if (!prompt || !/^[\x00-\x7F]*$/.test(prompt)) {
-        return message.reply("❌ Please provide a valid English prompt to generate an image.");
+      return api.sendMessage(
+        "❌ English prompt dao, bangla / emoji dile kaj korbe na",
+        threadID,
+        messageID
+      );
     }
 
-    message.reaction("⏳", event.messageID);
-    let tempFilePath; 
+    if (!fs.existsSync(CACHE_DIR)) {
+      fs.mkdirSync(CACHE_DIR, { recursive: true });
+    }
 
+    api.setMessageReaction("⏳", messageID, () => {}, true);
+
+    let imgPath;
     try {
-      const fullApiUrl = `${API_ENDPOINT}?prompt=${encodeURIComponent(prompt.trim())}`;
-      
-      // 1. Request the API, expecting the raw image data (stream) directly.
-      const imageDownloadResponse = await axios.get(fullApiUrl, {
-          responseType: 'stream',
-          timeout: 45000 // Increased timeout for generation
+      const apiUrl = `${API_ENDPOINT}?prompt=${encodeURIComponent(prompt)}`;
+
+      const res = await axios.get(apiUrl, {
+        responseType: "stream",
+        timeout: 60000
       });
 
-      // Check if the response status is not 200 (OK)
-      if (imageDownloadResponse.status !== 200) {
-           throw new Error(`API request failed with status code ${imageDownloadResponse.status}.`);
-      }
-      
-      const cacheDir = path.join(__dirname, 'cache');
-      if (!fs.existsSync(cacheDir)) {
-          await fs.mkdirp(cacheDir); 
-      }
-      
-      tempFilePath = path.join(cacheDir, `imagen3_output_${Date.now()}.png`);
-      
-      const writer = fs.createWriteStream(tempFilePath);
-      imageDownloadResponse.data.pipe(writer);
+      imgPath = path.join(CACHE_DIR, `imagen3_${Date.now()}.png`);
+      const writer = fs.createWriteStream(imgPath);
 
+      res.data.pipe(writer);
       await new Promise((resolve, reject) => {
         writer.on("finish", resolve);
-        writer.on("error", (err) => {
-          writer.close();
-          reject(err);
-        });
+        writer.on("error", reject);
       });
 
-      message.reaction("✅", event.messageID);
-      await message.reply({
-        body: `Imagen3 image generated ✨`,
-        attachment: fs.createReadStream(tempFilePath)
-      });
+      api.setMessageReaction("✅", messageID, () => {}, true);
 
-    } catch (error) {
-      message.reaction("❌", event.messageID);
-      
-      let errorMessage = "An error occurred during image generation.";
-      if (error.response) {
-         if (error.response.status === 404) {
-             errorMessage = "API Endpoint not found (404).";
-         } else {
-             errorMessage = `HTTP Error: ${error.response.status}`;
-         }
-      } else if (error.code === 'ETIMEDOUT') {
-         errorMessage = `Generation timed out. Try a simpler prompt or check API status.`;
-      } else if (error.message) {
-         errorMessage = `${error.message}`;
-      } else {
-         errorMessage = `Unknown error.`;
-      }
+      api.sendMessage(
+        {
+          body: "✨ Imagen3 image generated",
+          attachment: fs.createReadStream(imgPath)
+        },
+        threadID,
+        () => fs.unlinkSync(imgPath),
+        messageID
+      );
 
-      console.error("Imagen3 Command Error:", error);
-      message.reply(`❌ ${errorMessage}`);
-    } finally {
-      if (tempFilePath && fs.existsSync(tempFilePath)) {
-          await fs.unlink(tempFilePath); 
-      }
+    } catch (err) {
+      console.error("IMAGEN3 ERROR:", err);
+      api.setMessageReaction("❌", messageID, () => {}, true);
+      api.sendMessage(
+        "❌ Image generate korte parlam na, API down / slow hote pare",
+        threadID,
+        messageID
+      );
     }
   }
 };
