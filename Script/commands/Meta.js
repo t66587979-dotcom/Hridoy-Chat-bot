@@ -1,267 +1,160 @@
-const axios = require('axios');
-const fs = require('fs-extra');
-const path = require('path');
-const { createCanvas, loadImage } = require('canvas');
+const axios = global.nodemodule["axios"];
+const fs = global.nodemodule["fs-extra"];
+const path = global.nodemodule["path"];
+const { createCanvas, loadImage } = require("canvas");
 
 const API_ENDPOINT = "https://metakexbyneokex.fly.dev/images/generate";
 
-async function downloadImage(url, tempDir, filename) {
-    const tempFilePath = path.join(tempDir, filename);
-    try {
-        const response = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'arraybuffer',
-            timeout: 60000
-        });
-        await fs.writeFile(tempFilePath, response.data);
-        return tempFilePath;
-    } catch (e) {
-        if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-        throw new Error(`Failed to download image: ${e.message}`);
-    }
+module.exports.config = {
+  name: "meta",
+  aliases: ["metaai", "metagen"],
+  version: "1.0.0",
+  hasPermssion: 0,
+  credits: "Neoaz ゐ",
+  description: "Generate images using Meta AI",
+  commandCategory: "ai-image",
+  usages: "<prompt>",
+  cooldowns: 20
+};
+
+/* ================= HELPERS ================= */
+
+async function downloadImage(url, dir, name) {
+  const filePath = path.join(dir, name);
+  const res = await axios.get(url, {
+    responseType: "arraybuffer",
+    timeout: 60000
+  });
+  await fs.writeFile(filePath, res.data);
+  return filePath;
 }
 
-async function createGridImage(imagePaths, outputPath) {
-    const images = await Promise.all(imagePaths.map(p => loadImage(p)));
+async function createGrid(imgs, out) {
+  const images = await Promise.all(imgs.map(loadImage));
+  const w = images[0].width;
+  const h = images[0].height;
+  const p = 10;
 
-    const imgWidth = images[0].width;
-    const imgHeight = images[0].height;
-    const padding = 10;
-    const numberSize = 40;
+  const canvas = createCanvas(w * 2 + p * 3, h * 2 + p * 3);
+  const ctx = canvas.getContext("2d");
 
-    const canvasWidth = (imgWidth * 2) + (padding * 3);
-    const canvasHeight = (imgHeight * 2) + (padding * 3);
+  ctx.fillStyle = "#111";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext('2d');
+  const pos = [
+    [p, p],
+    [w + p * 2, p],
+    [p, h + p * 2],
+    [w + p * 2, h + p * 2]
+  ];
 
-    ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  images.forEach((img, i) => {
+    ctx.drawImage(img, pos[i][0], pos[i][1], w, h);
+    ctx.fillStyle = "rgba(0,0,0,.6)";
+    ctx.beginPath();
+    ctx.arc(pos[i][0] + 28, pos[i][1] + 28, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 22px Arial";
+    ctx.fillText(i + 1, pos[i][0] + 20, pos[i][1] + 34);
+  });
 
-    const positions = [
-        { x: padding, y: padding },
-        { x: imgWidth + (padding * 2), y: padding },
-        { x: padding, y: imgHeight + (padding * 2) },
-        { x: imgWidth + (padding * 2), y: imgHeight + (padding * 2) }
-    ];
-
-    for (let i = 0; i < images.length && i < 4; i++) {
-        const { x, y } = positions[i];
-        ctx.drawImage(images[i], x, y, imgWidth, imgHeight);
-
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
-        ctx.beginPath();
-        ctx.arc(x + numberSize, y + numberSize, numberSize - 5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 28px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText((i + 1).toString(), x + numberSize, y + numberSize);
-    }
-
-    const buffer = canvas.toBuffer('image/png');
-    await fs.writeFile(outputPath, buffer);
-    return outputPath;
+  await fs.writeFile(out, canvas.toBuffer());
+  return out;
 }
 
-module.exports = {
-    config: {
-        name: "meta",
-        aliases: ["metaai", "metagen"],
-        version: "1.0",
-        author: "Neoaz ゐ",
-        countDown: 20,
-        role: 0,
-        longDescription: "Generate images using Meta.AI. Returns a grid of 4 images, reply with 1-4 to select one or 'all' for all images.",
-        category: "ai-image",
-        guide: {
-            en: "{pn} <prompt>\n\nExample: {pn} a cute cat playing with yarn\n\nAfter receiving the grid, reply with 1, 2, 3, 4 to select one image, or 'all' to get all images."
-        }
-    },
+/* ================= COMMAND ================= */
 
-    onStart: async function({ message, args, event, commandName }) {
-        const prompt = args.join(" ");
-        const cacheDir = path.join(__dirname, 'cache');
+module.exports.run = async function ({ api, event, args }) {
+  const { threadID, messageID, senderID } = event;
 
-        if (!fs.existsSync(cacheDir)) {
-            await fs.mkdirp(cacheDir);
-        }
+  if (!args.length)
+    return api.sendMessage(
+      "❌ Prompt দাও\nExample: meta a cute cat",
+      threadID,
+      messageID
+    );
 
-        if (!prompt) {
-            return message.reply("❌ Please provide a prompt to generate images.\n\nExample: meta a beautiful sunset over mountains");
-        }
+  const prompt = args.join(" ");
+  const cacheDir = path.join(__dirname, "cache");
+  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
 
-        message.reaction("⏳", event.messageID);
+  api.setMessageReaction("⏳", messageID, () => {}, true);
 
-        const tempPaths = [];
-        let gridPath = '';
+  try {
+    const res = await axios.post(API_ENDPOINT, { prompt });
+    const imageUrls = res.data.images.slice(0, 4).map(i => i.url);
 
-        try {
-            const response = await axios.post(API_ENDPOINT, {
-                prompt: prompt.trim()
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                timeout: 150000
-            });
-
-            const data = response.data;
-
-            if (!data.success || !data.images || data.images.length === 0) {
-                const errorMsg = data.message || "API did not return any images.";
-                throw new Error(errorMsg);
-            }
-
-            const imageUrls = data.images.slice(0, 4).map(img => img.url);
-
-            if (imageUrls.length < 4) {
-                throw new Error(`Expected 4 images but received ${imageUrls.length}.`);
-            }
-
-            for (let i = 0; i < imageUrls.length; i++) {
-                const imgPath = await downloadImage(
-                    imageUrls[i],
-                    cacheDir,
-                    `meta_${Date.now()}_${i + 1}.png`
-                );
-                tempPaths.push(imgPath);
-            }
-
-            gridPath = path.join(cacheDir, `meta_grid_${Date.now()}.png`);
-            await createGridImage(tempPaths, gridPath);
-
-            message.reply({
-                body: `✨ Meta AI generated 4 images\n\n📷 Reply with 1, 2, 3, 4 to select one image, or "all" to get all images.`,
-                attachment: fs.createReadStream(gridPath)
-            }, (err, info) => {
-                if (!err) {
-                    global.GoatBot.onReply.set(info.messageID, {
-                        commandName,
-                        messageID: info.messageID,
-                        author: event.senderID,
-                        imageUrls: imageUrls,
-                        tempPaths: tempPaths,
-                        gridPath: gridPath,
-                        prompt: prompt
-                    });
-                } else {
-                    for (const p of tempPaths) {
-                        if (fs.existsSync(p)) fs.unlinkSync(p);
-                    }
-                    if (gridPath && fs.existsSync(gridPath)) fs.unlinkSync(gridPath);
-                }
-            });
-
-            message.reaction("✅", event.messageID);
-
-        } catch (error) {
-            message.reaction("❌", event.messageID);
-
-            for (const p of tempPaths) {
-                if (fs.existsSync(p)) fs.unlinkSync(p);
-            }
-            if (gridPath && fs.existsSync(gridPath)) fs.unlinkSync(gridPath);
-
-            let errorMessage = "An error occurred during image generation.";
-            if (error.response) {
-                if (error.response.status === 422) {
-                    errorMessage = "Invalid prompt format. Please try a different prompt.";
-                } else if (error.response.status === 503) {
-                    errorMessage = "Service temporarily unavailable. Please try again later.";
-                } else if (error.response.status === 500) {
-                    errorMessage = error.response.data?.detail || "Server error occurred.";
-                } else {
-                    errorMessage = `HTTP Error: ${error.response.status}`;
-                }
-            } else if (error.code === 'ETIMEDOUT' || error.code === 'ECONNABORTED') {
-                errorMessage = "Request timed out. The image generation is taking too long, please try again.";
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-
-            console.error("Meta Command Error:", error);
-            message.reply(`❌ ${errorMessage}`);
-        }
-    },
-
-    onReply: async function({ message, event, Reply }) {
-        const { imageUrls, tempPaths, gridPath, prompt, author } = Reply;
-
-        if (event.senderID !== author) {
-            return;
-        }
-
-        const userReply = event.body.trim().toLowerCase();
-        const cacheDir = path.join(__dirname, 'cache');
-        const selectedImagePaths = [];
-
-        try {
-            message.reaction("⏳", event.messageID);
-
-            if (userReply === 'all') {
-                for (let i = 0; i < imageUrls.length; i++) {
-                    const imgPath = path.join(cacheDir, `meta_selected_all_${Date.now()}_${i + 1}.png`);
-                    await downloadImage(imageUrls[i], cacheDir, path.basename(imgPath));
-                    selectedImagePaths.push(imgPath);
-                }
-
-                await message.reply({
-                    body: `✨ Here are all your images`,
-                    attachment: selectedImagePaths.map(p => fs.createReadStream(p))
-                });
-            } else {
-                const selection = parseInt(userReply);
-
-                if (isNaN(selection) || selection < 1 || selection > 4) {
-                    message.reaction("", event.messageID);
-                    return;
-                }
-
-                const selectedUrl = imageUrls[selection - 1];
-
-                if (!selectedUrl) {
-                    return message.reply("❌ Invalid selection. Please reply with 1, 2, 3, 4, or 'all'.");
-                }
-
-                const selectedImagePath = path.join(cacheDir, `meta_selected_${Date.now()}.png`);
-                await downloadImage(selectedUrl, cacheDir, path.basename(selectedImagePath));
-                selectedImagePaths.push(selectedImagePath);
-
-                await message.reply({
-                    body: `✨ Here is your image`,
-                    attachment: fs.createReadStream(selectedImagePath)
-                });
-            }
-
-            message.reaction("✅", event.messageID);
-
-        } catch (error) {
-            message.reaction("❌", event.messageID);
-            console.error("Meta Selection Error:", error);
-            message.reply(`❌ Failed to retrieve selected image: ${error.message}`);
-        } finally {
-            const cleanup = async () => {
-                for (const p of selectedImagePaths) {
-                    if (p && fs.existsSync(p)) {
-                        await fs.unlink(p).catch(console.error);
-                    }
-                }
-                if (tempPaths) {
-                    await Promise.all(tempPaths.map(p =>
-                        fs.existsSync(p) ? fs.unlink(p).catch(console.error) : Promise.resolve()
-                    ));
-                }
-                if (gridPath && fs.existsSync(gridPath)) {
-                    await fs.unlink(gridPath).catch(console.error);
-                }
-            };
-            cleanup().catch(console.error);
-
-            global.GoatBot.onReply.delete(Reply.messageID);
-        }
+    const temp = [];
+    for (let i = 0; i < imageUrls.length; i++) {
+      temp.push(
+        await downloadImage(imageUrls[i], cacheDir, `meta_${Date.now()}_${i}.png`)
+      );
     }
+
+    const gridPath = path.join(cacheDir, "meta_grid.png");
+    await createGrid(temp, gridPath);
+
+    api.sendMessage(
+      {
+        body: "🧠 Meta AI Result\nReply 1-4 or all",
+        attachment: fs.createReadStream(gridPath)
+      },
+      threadID,
+      (err, info) => {
+        if (!err) {
+          global.GoatBot.onReply.set(info.messageID, {
+            name: "meta",
+            author: senderID,
+            imageUrls
+          });
+        }
+      },
+      messageID
+    );
+
+    api.setMessageReaction("✅", messageID, () => {}, true);
+  } catch (e) {
+    api.setMessageReaction("❌", messageID, () => {}, true);
+    api.sendMessage("❌ Image generate failed", threadID, messageID);
+  }
+};
+
+/* ================= REPLY ================= */
+
+module.exports.onReply = async function ({ api, event, Reply }) {
+  if (event.senderID !== Reply.author) return;
+
+  const text = event.body.trim().toLowerCase();
+  const cacheDir = path.join(__dirname, "cache");
+
+  if (text === "all") {
+    const files = [];
+    for (let i = 0; i < Reply.imageUrls.length; i++) {
+      files.push(
+        fs.createReadStream(
+          await downloadImage(
+            Reply.imageUrls[i],
+            cacheDir,
+            `meta_all_${Date.now()}_${i}.png`
+          )
+        )
+      );
+    }
+    return api.sendMessage({ attachment: files }, event.threadID);
+  }
+
+  const num = parseInt(text);
+  if (num < 1 || num > 4) return;
+
+  const img = await downloadImage(
+    Reply.imageUrls[num - 1],
+    cacheDir,
+    `meta_select_${Date.now()}.png`
+  );
+
+  api.sendMessage(
+    { attachment: fs.createReadStream(img) },
+    event.threadID
+  );
 };
