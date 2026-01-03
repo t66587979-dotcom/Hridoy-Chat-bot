@@ -1,19 +1,22 @@
 const axios = require("axios");
 
+const FAL_API_KEY = "your_fal_ai_key_here"; // এখানে তোমার fal.ai API key পেস্ট করো
+const FAL_ENDPOINT = "https://fal.run/fal-ai/flux/schnell"; // ফাস্ট মডেল (schnell), চাইলে dev/pro চেঞ্জ করতে পারো
+
 module.exports = {
   config: {
     name: "aiphoto",
-    aliases: ["aip", "aigen", "fluxphoto"],
-    version: "1.1",          // ছোট আপডেট
-    author: "Neoaz ゐ | optimized",
-    countDown: 20,           // বাড়ানো হয়েছে কারণ Flux জেনারেশন সময় লাগে
+    aliases: ["aip", "flux", "aigen"],
+    version: "1.2",
+    author: "Neoaz ゐ | updated with fal.ai",
+    countDown: 15,
     role: 0,
-    shortDescription: { en: "Generate AI image with AI Photo (Flux)" },
-    longDescription: { en: "Generate high-quality images using Flux-based AI Photo model" },
+    shortDescription: { en: "Generate AI image with Flux (fal.ai)" },
+    longDescription: { en: "High-quality Flux AI image generation" },
     category: "image",
     guide: {
-      bn: "{pn} <প্রম্পট>\nউদাহরণ: {pn} একটা সুন্দর সূর্যাস্তের সমুদ্র সৈকত",
-      en: "{pn} <prompt>\nExample: {pn} A beautiful cyberpunk city at night"
+      bn: "{pn} <প্রম্পট>\nউদাহরণ: {pn} futuristic city at sunset, cyberpunk style",
+      en: "{pn} <prompt>\nExample: {pn} A majestic dragon in a fantasy forest"
     }
   },
 
@@ -21,53 +24,52 @@ module.exports = {
     const prompt = args.join(" ").trim();
 
     if (!prompt) {
-      return message.reply("❌ প্রম্পট দাও!\nউদাহরণ: aip A majestic dragon flying over mountains");
+      return message.reply("❌ প্রম্পট দাও! উদাহরণ: aip A beautiful anime girl in rainy Tokyo");
     }
 
-    // রিয়্যাকশন — waiting
     await message.reaction("⏳", event.messageID);
 
     try {
-      const res = await axios.get("https://fluxcdibai-1.onrender.com/generate", {
-        params: { 
-          prompt: prompt,
-          model: "ai photo"   // অরিজিনাল রাখা হয়েছে
-        },
-        timeout: 90000          // ৯০ সেকেন্ড — Render-এর জন্য যথেষ্ট
-      });
+      const response = await axios.post(
+        FAL_ENDPOINT,
+        { prompt: prompt },
+        {
+          headers: {
+            Authorization: `Key ${FAL_API_KEY}`,
+            "Content-Type": "application/json"
+          },
+          timeout: 60000
+        }
+      );
 
-      const data = res.data;
-      const imageUrl = data?.data?.imageResponseVo?.url;
+      const imageUrl = response.data.images?.[0]?.url;
 
-      if (!imageUrl || typeof imageUrl !== "string" || !imageUrl.startsWith("http")) {
-        throw new Error("No valid image URL returned from API");
+      if (!imageUrl) {
+        throw new Error("No image URL returned");
       }
 
-      // সাকসেস রিয়্যাকশন
       await message.reaction("✅", event.messageID);
 
       await message.reply({
-        body: `✨ AI Photo (Flux) দিয়ে জেনারেট করা হয়েছে!\n\nপ্রম্পট: ${prompt}`,
+        body: `✨ Flux AI দিয়ে জেনারেট করা হয়েছে (fal.ai)!\n\nপ্রম্পট: ${prompt}`,
         attachment: await global.utils.getStreamFromURL(imageUrl)
       });
 
     } catch (err) {
-      console.error("[aiphoto Error]", err.message || err);
+      console.error("[aiphoto fal.ai Error]", err.message || err);
 
-      let errMsg = "ইমেজ জেনারেট করতে সমস্যা হয়েছে 😔";
+      let errMsg = "ইমেজ জেনারেট করতে সমস্যা 😔";
 
-      if (err.code === 'ETIMEDOUT' || err.message?.includes('timeout')) {
-        errMsg = "জেনারেশনের সময় শেষ। API স্লো/ডাউন — পরে আবার চেষ্টা করো।";
-      } else if (err.response) {
-        if (err.response.status === 503 || err.response.status === 429) {
-          errMsg = "API সার্ভার ডাউন বা ব্যস্ত (503/Rate limit)। কিছুক্ষণ অপেক্ষা করো।";
-        } else if (err.response.status >= 400 && err.response.status < 500) {
-          errMsg = "রিকোয়েস্ট ভুল — প্রম্পট চেক করো বা API চেঞ্জ করতে হবে।";
-        }
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        errMsg = "API কী ভুল বা এক্সপায়ার্ড। fal.ai থেকে নতুন কী নাও।";
+      } else if (err.code === 'ETIMEDOUT') {
+        errMsg = "জেনারেশন টাইমআউট — পরে আবার চেষ্টা করো।";
+      } else if (err.response?.status === 429) {
+        errMsg = "ক্রেডিট শেষ বা রেট লিমিট। fal.ai-তে চেক করো।";
       }
 
       await message.reaction("❌", event.messageID);
-      return message.reply(`❌ ${errMsg}\n\n(টেকনিক্যাল: ${err.message || "Unknown error"})`);
+      return message.reply(`❌ ${errMsg}\n(ডিটেইল: ${err.message || "Unknown"})`);
     }
   }
 };
