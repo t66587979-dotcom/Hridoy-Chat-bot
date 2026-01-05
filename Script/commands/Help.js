@@ -4,12 +4,12 @@ const path = require("path");
 
 module.exports.config = {
   name: "help",
-  version: "2.1.0",
+  version: "3.0.0",
   hasPermssion: 0,
-  credits: "hridoy+ Upgrade by GPT",
-  description: "Show commands by category",
+  credits: "SHAHADAT SAHU (Upgraded by NeoKEX)",
+  description: "Shows all commands category wise",
   commandCategory: "system",
-  usages: "[command/page]",
+  usages: "[command name / page]",
   cooldowns: 5
 };
 
@@ -28,27 +28,33 @@ module.exports.languages = {
 ┣━━━━━━━━━━━━━━━━┫
 ┃ ⚙ Prefix: %8
 ┃ 🤖 Bot Name: %9
+┃ 👑 Owner: 𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍
 ╰━━━━━━━━━━━━━━━━╯`
   }
 };
 
+/* ===== HELP IMAGE ===== */
 const helpImages = [
   "https://i.imgur.com/0IKTM64.jpeg"
 ];
 
-function downloadImages(cb) {
+function downloadImages(callback) {
   let files = [];
   let done = 0;
+
   helpImages.forEach((url, i) => {
-    const p = path.join(__dirname, "cache", `help_${i}.jpg`);
-    files.push(p);
-    request(url).pipe(fs.createWriteStream(p)).on("close", () => {
-      done++;
-      if (done === helpImages.length) cb(files);
-    });
+    const filePath = path.join(__dirname, "cache", `help_${i}.jpg`);
+    files.push(filePath);
+    request(url)
+      .pipe(fs.createWriteStream(filePath))
+      .on("close", () => {
+        done++;
+        if (done === helpImages.length) callback(files);
+      });
   });
 }
 
+/* ===== RUN ===== */
 module.exports.run = function ({ api, event, args, getText }) {
   const { commands } = global.client;
   const { threadID, messageID } = event;
@@ -56,20 +62,21 @@ module.exports.run = function ({ api, event, args, getText }) {
   const threadSetting = global.data.threadData.get(threadID) || {};
   const prefix = threadSetting.PREFIX || global.config.PREFIX;
 
-  /* 🔹 Single command info */
+  /* ===== SINGLE COMMAND INFO ===== */
   if (args[0] && commands.has(args[0].toLowerCase())) {
     const cmd = commands.get(args[0].toLowerCase());
+
     const text = getText(
       "moduleInfo",
       cmd.config.name,
-      cmd.config.usages || "N/A",
-      cmd.config.description || "N/A",
-      cmd.config.hasPermssion,
+      cmd.config.usages || "Not Provided",
+      cmd.config.description || "Not Provided",
+      cmd.config.hasPermssion || 0,
       cmd.config.credits || "Unknown",
-      cmd.config.commandCategory || "Other",
+      cmd.config.commandCategory || "Unknown",
       cmd.config.cooldowns || 0,
       prefix,
-      global.config.BOTNAME || "Bot"
+      global.config.BOTNAME || "Chat Bot"
     );
 
     return downloadImages(files => {
@@ -82,49 +89,33 @@ module.exports.run = function ({ api, event, args, getText }) {
     });
   }
 
-  /* 🔹 Group by category */
+  /* ===== CATEGORY WISE LIST ===== */
   const categories = {};
-  for (const cmd of commands.values()) {
-    const cat = (cmd.config.commandCategory || "Other").toUpperCase();
+
+  for (const [name, cmd] of commands) {
+    const cat = cmd.config.commandCategory || "others";
     if (!categories[cat]) categories[cat] = [];
-    categories[cat].push(cmd.config.name);
+    categories[cat].push(name);
   }
 
-  const categoryKeys = Object.keys(categories).sort();
-  const page = Math.max(parseInt(args[0]) || 1, 1);
-  const perPage = 4;
-  const totalPages = Math.ceil(categoryKeys.length / perPage);
+  let msg = `━━━☠️ 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐌𝐄𝐍𝐔 ☠️━━━\n`;
 
-  const showCats = categoryKeys.slice(
-    (page - 1) * perPage,
-    page * perPage
-  );
+  Object.keys(categories)
+    .sort()
+    .forEach(cat => {
+      msg += `\n╭──『 ${cat.toUpperCase()} 』\n`;
+      msg += categories[cat]
+        .sort()
+        .map(cmd => `┃ ✪ ${cmd}`)
+        .join("\n");
+      msg += `\n╰────────────◊`;
+    });
 
-  let msg = "";
-  showCats.forEach(cat => {
-    msg += `\n📂 ${cat} (${categories[cat].length})\n`;
-    msg += categories[cat]
-      .sort()
-      .map(c => ` ┣ ${c}`)
-      .join("\n");
-    msg += "\n";
-  });
-
-  const text = `╭━━━━━━━━━━━━━━━━╮
-┃ 📜 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐂𝐀𝐓𝐄𝐆𝐎𝐑𝐘 📜
-┣━━━━━━━━━━━━━━━━┫
-┃ 📄 Page: ${page}/${totalPages}
-┃ 🧮 Total Cmd: ${commands.size}
-┣━━━━━━━━━━━━━━━━┫
-${msg}
-┣━━━━━━━━━━━━━━━━┫
-┃ ⚙ Prefix: ${prefix}
-┃ 🤖 Bot: ${global.config.BOTNAME || "Bot"}
-╰━━━━━━━━━━━━━━━━╯`;
+  msg += `\n\n➥ Use: ${prefix}help <command name>\n➥ Total Commands: ${commands.size}`;
 
   downloadImages(files => {
     api.sendMessage(
-      { body: text, attachment: files.map(f => fs.createReadStream(f)) },
+      { body: msg, attachment: files.map(f => fs.createReadStream(f)) },
       threadID,
       () => files.forEach(f => fs.unlinkSync(f)),
       messageID
