@@ -3,23 +3,19 @@ const request = require("request");
 const path = require("path");
 
 module.exports.config = {
-    name: "help",
-    version: "2.0.0",
-    hasPermssion: 0,
-    credits: "SHAHADAT SAHU",
-    description: "Shows all commands with details",
-    commandCategory: "system",
-    usages: "[command name/page number]",
-    cooldowns: 5,
-    envConfig: {
-        autoUnsend: true,
-        delayUnsend: 20
-    }
+  name: "help",
+  version: "2.1.0",
+  hasPermssion: 0,
+  credits: "hridoy+ Upgrade by GPT",
+  description: "Show commands by category",
+  commandCategory: "system",
+  usages: "[command/page]",
+  cooldowns: 5
 };
 
 module.exports.languages = {
-    "en": {
-        "moduleInfo": `╭━━━━━━━━━━━━━━━━╮
+  en: {
+    moduleInfo: `╭━━━━━━━━━━━━━━━━╮
 ┃ ✨ 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐈𝐍𝐅𝐎 ✨
 ┣━━━━━━━━━━━┫
 ┃ 🔖 Name: %1
@@ -32,127 +28,106 @@ module.exports.languages = {
 ┣━━━━━━━━━━━━━━━━┫
 ┃ ⚙ Prefix: %8
 ┃ 🤖 Bot Name: %9
-┃ 👑 Owner: 𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍
-╰━━━━━━━━━━━━━━━━╯`,
-        "helpList": "[ There are %1 commands. Use: \"%2help commandName\" to view more. ]",
-        "user": "User",
-        "adminGroup": "Admin Group",
-        "adminBot": "Admin Bot"
-    }
+╰━━━━━━━━━━━━━━━━╯`
+  }
 };
-
-// এখানে আপনার ফোটো Imgur লিংক করে বসাবেন✅
 
 const helpImages = [
-    "https://i.imgur.com/0IKTM64.jpeg"
+  "https://i.imgur.com/0IKTM64.jpeg"
 ];
 
-function downloadImages(callback) {
-    let files = [];
-    let completed = 0;
-
-    helpImages.forEach((url, i) => {  
-        let filePath = path.join(__dirname, "cache", `help${i}.jpg`);  
-        files.push(filePath);  
-        request(url).pipe(fs.createWriteStream(filePath)).on("close", () => {  
-            completed++;  
-            if (completed === helpImages.length) callback(files);  
-        });  
+function downloadImages(cb) {
+  let files = [];
+  let done = 0;
+  helpImages.forEach((url, i) => {
+    const p = path.join(__dirname, "cache", `help_${i}.jpg`);
+    files.push(p);
+    request(url).pipe(fs.createWriteStream(p)).on("close", () => {
+      done++;
+      if (done === helpImages.length) cb(files);
     });
+  });
 }
 
-module.exports.handleEvent = function ({ api, event, getText }) {
-    const { commands } = global.client;
-    const { threadID, messageID, body } = event;
-
-    if (!body || typeof body === "undefined" || body.indexOf("help") != 0) return;  
-    const splitBody = body.slice(body.indexOf("help")).trim().split(/\s+/);  
-    if (splitBody.length < 2 || !commands.has(splitBody[1].toLowerCase())) return;  
-
-    const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};  
-    const command = commands.get(splitBody[1].toLowerCase());  
-    const prefix = threadSetting.PREFIX || global.config.PREFIX;  
-
-    const detail = getText("moduleInfo",  
-        command.config.name,  
-        command.config.usages || "Not Provided",  
-        command.config.description || "Not Provided",  
-        command.config.hasPermssion,  
-        command.config.credits || "Unknown",  
-        command.config.commandCategory || "Unknown",  
-        command.config.cooldowns || 0,  
-        prefix,  
-        global.config.BOTNAME || "𝐒𝐡𝐚𝐡𝐚𝐝𝐚𝐭 𝐂𝐡𝐚𝐭 𝐁𝐨𝐭"  
-    );  
-
-    downloadImages(files => {  
-        const attachments = files.map(f => fs.createReadStream(f));  
-        api.sendMessage({ body: detail, attachment: attachments }, threadID, () => {  
-            files.forEach(f => fs.unlinkSync(f));  
-        }, messageID);  
-    });
-};
-
 module.exports.run = function ({ api, event, args, getText }) {
-    const { commands } = global.client;
-    const { threadID, messageID } = event;
+  const { commands } = global.client;
+  const { threadID, messageID } = event;
 
-    const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};  
-    const prefix = threadSetting.PREFIX || global.config.PREFIX;  
+  const threadSetting = global.data.threadData.get(threadID) || {};
+  const prefix = threadSetting.PREFIX || global.config.PREFIX;
 
-    if (args[0] && commands.has(args[0].toLowerCase())) {  
-        const command = commands.get(args[0].toLowerCase());  
+  /* 🔹 Single command info */
+  if (args[0] && commands.has(args[0].toLowerCase())) {
+    const cmd = commands.get(args[0].toLowerCase());
+    const text = getText(
+      "moduleInfo",
+      cmd.config.name,
+      cmd.config.usages || "N/A",
+      cmd.config.description || "N/A",
+      cmd.config.hasPermssion,
+      cmd.config.credits || "Unknown",
+      cmd.config.commandCategory || "Other",
+      cmd.config.cooldowns || 0,
+      prefix,
+      global.config.BOTNAME || "Bot"
+    );
 
-        const detailText = getText("moduleInfo",  
-            command.config.name,  
-            command.config.usages || "Not Provided",  
-            command.config.description || "Not Provided",  
-            command.config.hasPermssion,  
-            command.config.credits || "Unknown",  
-            command.config.commandCategory || "Unknown",  
-            command.config.cooldowns || 0,  
-            prefix,  
-            global.config.BOTNAME || "𝙆𝙖𝙜𝙪𝙮𝙖 Ō𝙩𝙨𝙪𝙩𝙨𝙪𝙠𝙞"  
-        );  
+    return downloadImages(files => {
+      api.sendMessage(
+        { body: text, attachment: files.map(f => fs.createReadStream(f)) },
+        threadID,
+        () => files.forEach(f => fs.unlinkSync(f)),
+        messageID
+      );
+    });
+  }
 
-        downloadImages(files => {  
-            const attachments = files.map(f => fs.createReadStream(f));  
-            api.sendMessage({ body: detailText, attachment: attachments }, threadID, () => {  
-                files.forEach(f => fs.unlinkSync(f));  
-            }, messageID);  
-        });  
-        return;  
-    }  
+  /* 🔹 Group by category */
+  const categories = {};
+  for (const cmd of commands.values()) {
+    const cat = (cmd.config.commandCategory || "Other").toUpperCase();
+    if (!categories[cat]) categories[cat] = [];
+    categories[cat].push(cmd.config.name);
+  }
 
-    const arrayInfo = Array.from(commands.keys())
-        .filter(cmdName => cmdName && cmdName.trim() !== "")
-        .sort();  
+  const categoryKeys = Object.keys(categories).sort();
+  const page = Math.max(parseInt(args[0]) || 1, 1);
+  const perPage = 4;
+  const totalPages = Math.ceil(categoryKeys.length / perPage);
 
-    const page = Math.max(parseInt(args[0]) || 1, 1);  
-    const numberOfOnePage = 20;  
-    const totalPages = Math.ceil(arrayInfo.length / numberOfOnePage);  
-    const start = numberOfOnePage * (page - 1);  
-    const helpView = arrayInfo.slice(start, start + numberOfOnePage);  
+  const showCats = categoryKeys.slice(
+    (page - 1) * perPage,
+    page * perPage
+  );
 
-    let msg = helpView.map(cmdName => `┃ ✪ ${cmdName}`).join("\n");
+  let msg = "";
+  showCats.forEach(cat => {
+    msg += `\n📂 ${cat} (${categories[cat].length})\n`;
+    msg += categories[cat]
+      .sort()
+      .map(c => ` ┣ ${c}`)
+      .join("\n");
+    msg += "\n";
+  });
 
-    const text = `╭━━━━━━━━━━━━━━━━╮
-┃ 📜 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐋𝐈𝐒𝐓 📜
-┣━━━━━━━━━━━━━━━┫
+  const text = `╭━━━━━━━━━━━━━━━━╮
+┃ 📜 𝐂𝐎𝐌𝐌𝐀𝐍𝐃 𝐂𝐀𝐓𝐄𝐆𝐎𝐑𝐘 📜
+┣━━━━━━━━━━━━━━━━┫
 ┃ 📄 Page: ${page}/${totalPages}
-┃ 🧮 Total: ${arrayInfo.length}
+┃ 🧮 Total Cmd: ${commands.size}
 ┣━━━━━━━━━━━━━━━━┫
 ${msg}
 ┣━━━━━━━━━━━━━━━━┫
 ┃ ⚙ Prefix: ${prefix}
-┃ 🤖 Bot Name: ${global.config.BOTNAME || "𝙆𝙖𝙜𝙪𝙮𝙖 Ō𝙩𝙨𝙪𝙩𝙨𝙪𝙠𝙞"}
-┃ 👑 Owner: 𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍
+┃ 🤖 Bot: ${global.config.BOTNAME || "Bot"}
 ╰━━━━━━━━━━━━━━━━╯`;
 
-    downloadImages(files => {  
-        const attachments = files.map(f => fs.createReadStream(f));  
-        api.sendMessage({ body: text, attachment: attachments }, threadID, () => {  
-            files.forEach(f => fs.unlinkSync(f));  
-        }, messageID);  
-    });  
+  downloadImages(files => {
+    api.sendMessage(
+      { body: text, attachment: files.map(f => fs.createReadStream(f)) },
+      threadID,
+      () => files.forEach(f => fs.unlinkSync(f)),
+      messageID
+    );
+  });
 };
