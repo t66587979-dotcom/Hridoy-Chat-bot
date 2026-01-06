@@ -8,7 +8,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "CYBER ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝐀𝐌_ ☢️",
  description: "Auto resend removed messages",
- commandCategory: "general",
+ commandCategory: "System",
  usages: "",
  cooldowns: 0,
  hide: true,
