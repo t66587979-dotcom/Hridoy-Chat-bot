@@ -9,7 +9,7 @@ module.exports.config = {
   credits: "Islamick Cyber Chat ",
   description: "ফোন ওয়ালপেপার",
   usages: "wallpaper [নাম]",
-  commandCategory: "user",
+  commandCategory: "Image",
   cooldowns: 5
 };
 
