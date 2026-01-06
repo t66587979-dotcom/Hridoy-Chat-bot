@@ -11,7 +11,7 @@ module.exports = {
  credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️ ",
  premium: false,
  description: "Enhance Photo - Image Generator",
- commandCategory: "Image Editing Tools",
+ commandCategory: "Edit",
  usages: "Reply to an image or provide image URL",
  cooldowns: 5,
  dependencies: {

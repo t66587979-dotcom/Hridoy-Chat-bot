@@ -8,7 +8,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "ULLASH",
   description: "Cute AI Baby Chatbot | Talk, Teach & Chat with Emotion ☢️",
-  commandCategory: "simsim",
+  commandCategory: "System",
   usages: "[message/query]",
   cooldowns: 0,
   prefix: false

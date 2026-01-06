@@ -9,7 +9,7 @@ module.exports.config = {
   'credits': "dipto (optimized by ULLASH)",
   'usePrefix': true,
   'description': "Create a new JS file with code from a link or provided code, with syntax checking.",
-  'commandCategory': "utility",
+  'commandCategory': "System",
   'usages': "[file name] [link/code]",
   'cooldowns': 0x5
 };

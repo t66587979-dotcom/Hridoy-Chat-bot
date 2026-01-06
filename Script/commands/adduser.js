@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "Add user to the group by link or id",
-	commandCategory: "group",
+	commandCategory: "Group",
 	usages: "[args]",
 	cooldowns: 5
 };

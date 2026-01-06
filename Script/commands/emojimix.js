@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Shaon Ahmed",
  description: "Mix emoji",
- commandCategory: "image",
+ commandCategory: "Image",
  usages: "[emoji1] [emoji2]",
  cooldowns: 0,
  dependencies: {

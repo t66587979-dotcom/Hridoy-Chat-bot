@@ -7,7 +7,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "𝐒𝐡𝐚𝐡𝐚𝐝𝐚𝐭 𝐒𝐀𝐇𝐔",
  description: "Send a random Facebook boy profile picture",
- commandCategory: "Random-IMG",
+ commandCategory: "Image",
  usages: "boy pp",
  cooldowns: 2,
  dependencies: {

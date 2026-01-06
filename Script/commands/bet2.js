@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍",
   description: "Bet system with Economy sync 💸",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "[amount]",
   cooldowns: 5
 };

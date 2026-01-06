@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "𝐒𝐡𝐚𝐨𝐧 𝐀𝐡𝐞𝐦𝐞𝐝",
  description: "attitude video",
- commandCategory: "Hình ảnh",
+ commandCategory: "Media",
  usages: "atdvdo",
  cooldowns: 00,
  dependencies: {
@@ -18,7 +18,7 @@ module.exports.run = async({api,event,args,client,Users,Threads,__GLOBAL,Currenc
 const axios = global.nodemodule["axios"];
 const request = global.nodemodule["request"];
 const fs = global.nodemodule["fs-extra"];
- var hi = ["𝐀𝐓𝐓𝐈𝐓𝐔𝐃𝐄 𝐕𝐈𝐃𝐄𝐎 𝐁𝐘 😇\n\n𝗬𝗼𝘂𝗥 𝗙𝗮𝘃𝗼𝘂𝗿𝗶𝘁𝗲 𝗦𝗔 𝗛𝗨"];
+ var hi = ["𝐀𝐓𝐓𝐈𝐓𝐔𝐃𝐄 𝐕𝐈𝐃𝐄𝐎 𝐁𝐘 😇\n\n𝗬𝗼𝘂𝗥 𝗙𝗮𝘃𝗼𝘂𝗿𝗶𝘁𝗲 𝐇𝐑𝐈𝐃𝐎𝐘"];
  var know = hi[Math.floor(Math.random() * hi.length)];
  var link = [
  "https://drive.google.com/uc?id=11dUXILgge35GyV9ilD_JmzLiL7yq5WMc",

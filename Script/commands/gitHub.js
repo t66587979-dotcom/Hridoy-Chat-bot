@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Islamick Cyber Chat",
  description: "information github username",
- commandCategory: "info",
+ commandCategory: "information",
  depndencies: {"fetch": "","node-fetch": "", "moment": ""},
  usages: "github <username>",
  cooldowns: 5

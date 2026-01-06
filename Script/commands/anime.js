@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "SHAHADAT SAHU",
   description: "Random Anime Videos From SAHU API",
-  commandCategory: "video",
+  commandCategory: "Media",
   usages: "anemi",
   cooldowns: 5
 };

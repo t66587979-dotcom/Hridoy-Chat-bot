@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍",
   description: "Show your balance or someone else's (reply/mention/uid).",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "[reply|mention|uid]",
   cooldowns: 2
 };

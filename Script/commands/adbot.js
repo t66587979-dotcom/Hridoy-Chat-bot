@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "𝐒𝐇𝐀𝐇𝐀𝐃𝐀𝐓 𝐒𝐀𝐇𝐔",
     description: "DESCRIPTION ABOUT BOT",
-    commandCategory: "Media",
+    commandCategory: "system",
     usages: "",
     cooldowns: 4,
     dependencies: {
@@ -54,14 +54,14 @@ module.exports.run = async ({ api, event, args }) => {
     if (args[0] == "admin") {
         let callback = () => api.sendMessage(
             {
-                body: `———»ADMIN BOT«———\n❯ Name: 𝐒𝐇𝐀𝐇𝐀𝐃𝐀𝐓 𝐒𝐀𝐇𝐔\n❯ Facebook: https://facebook.com/100001039692046\n❯ Thanks for using ${global.config.BOTNAME} bot`,
+                body: `———»ADMIN BOT«———\n❯ Name: 𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍\n❯ Facebook: https://facebook.com/100048786044500\n❯ Thanks for using ${global.config.BOTNAME} `,
                 attachment: fs.createReadStream(__dirname + "/cache/1.png")
             },
             event.threadID,
             () => fs.unlinkSync(__dirname + "/cache/1.png")
         );
 
-        return request(encodeURI(`https://graph.facebook.com/100001039692046/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`))
+        return request(encodeURI(`https://graph.facebook.com/100048786044500/picture?height=720&width=720&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`))
             .pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
             .on('close', () => callback());
     }

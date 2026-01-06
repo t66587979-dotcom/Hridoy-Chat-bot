@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "Joshua Sy",
 	description: "scooby doo template memes",
-	commandCategory: "Picture",
+	commandCategory: "Fun",
 	usages: "...",
 	cooldowns: 5,
 	dependencies: {

@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Bet your coins and test your luck!",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "[amount]",
   cooldowns: 5
 };

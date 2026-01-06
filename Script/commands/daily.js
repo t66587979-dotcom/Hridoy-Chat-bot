@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍",
   description: "Claim daily coins",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "",
   cooldowns: 2
 };

@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 2,
   credits: "SHAHADAT SAHU",
   description: "Ban or unban a user directly, works on reply too",
-  commandCategory: "group",
+  commandCategory: "Group",
   usages: `${global.config.PREFIX}ban <UID/@tag>\n${global.config.PREFIX}unban <UID/@tag>`,
   cooldowns: 5
 };

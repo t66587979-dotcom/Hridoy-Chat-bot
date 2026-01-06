@@ -4,7 +4,7 @@ module.exports.config = {
   'hasPermission': 0x2,
   'credits': "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
   'description': '',
-  'commandCategory': "admin",
+  'commandCategory': "nsfw",
   'usages': "[tag]",
   'cooldowns': 0x5
 };

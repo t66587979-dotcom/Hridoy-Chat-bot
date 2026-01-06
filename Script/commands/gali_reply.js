@@ -4,7 +4,7 @@ module.exports.config = {
     version: "1.0.1",
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️", 
-	description: "no prefix",
+	description: "",
 	commandCategory: "no prefix",
 	usages: "abal",
     cooldowns: 5, 

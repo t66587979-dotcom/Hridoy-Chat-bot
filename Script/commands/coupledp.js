@@ -8,7 +8,7 @@ module.exports.config = {
  credit: "Loid Butter",
  cooldown: 5,
  description: "couple dp",
- commandCategory: "image",
+ commandCategory: "Image",
  dependencies: {
    "axios":""
  }

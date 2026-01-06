@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "HRIDOY HOSSEN + GPT Secure Upgrade",
     description: "Funny fingering ship image generator",
-    commandCategory: "Love",
+    commandCategory: "nsfw",
     usages: "[tag someone]",
     cooldowns: 5,
     dependencies: {

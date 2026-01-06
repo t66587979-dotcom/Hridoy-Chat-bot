@@ -7,7 +7,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Main economy system for all games",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "",
   cooldowns: 0
 };

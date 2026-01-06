@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "𝗦𝗵𝗮𝗵𝗮𝗱𝗮𝘁 𝗦𝗔𝗛𝗨",
  description: "Emoji দিলে কিউট মেয়ের ভয়েস পাঠাবে 😍",
- commandCategory: "noprefix",
+ commandCategory: "",
  usages: "😘🥰😍",
  cooldowns: 5
 };

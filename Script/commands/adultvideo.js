@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 2,
   credits: "Hridoy Hossen",
   description: "18+ VIDEOS",
-  commandCategory: "video",
+  commandCategory: "Media",
   usages: "18+ vedio",
   cooldowns: 5,
   dependencies: {
