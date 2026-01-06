@@ -8,8 +8,8 @@ module.exports.config = {
  'version': "6.9",
  'hasPermission': 0x0,
  'credits': "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
- 'description': "Facebook cover",
- 'commandCategory': " Image",
+ 'description': "Image",
+ 'commandCategory': "Image",
  'usages': "name - title - address - email - phone - color (default = white)",
  'cooldowns': 0x5
 };
