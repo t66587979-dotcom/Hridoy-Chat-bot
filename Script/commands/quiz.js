@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Answer quiz questions to earn or lose coins",
-  commandCategory: "games",
+  commandCategory: "Games",
   usages: "",
   cooldowns: 5
 };
