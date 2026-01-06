@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "Shahadat Islam",
  description: "Group এ সবাইকে নির্দিষ্ট সংখ্যায় মেনশন পাঠানো",
- commandCategory: "group",
+ commandCategory: "Group",
  usages: "/tag [everyone]",
  cooldowns: 2
 };

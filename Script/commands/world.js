@@ -1,11 +1,11 @@
 module.exports.config = {
-  name: "🌍",
+  name: "",
   version: "1.0.0",
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Send best Islamic video when someone types 🌍",
-  commandCategory: "noprefix",
-  usages: "🌍",
+  commandCategory: "Media",
+  usages: "alhamdulillah",
   cooldowns: 5,
   dependencies: {
     "request": "",

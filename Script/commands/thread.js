@@ -4,7 +4,7 @@
 	hasPermssion: 2,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "Ban or unban a group",
-	commandCategory: "system",
+	commandCategory: "System",
 	usages: "[unban/ban/search] [ID or text]",
 	cooldowns: 5,
 	dependencies: {

@@ -7,7 +7,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "Comment on the board ( ͡° ͜ʖ ͡°)",
-	commandCategory: "edit-img",
+	commandCategory: "Fun",
 	usages: "zuck [text]",
 	cooldowns: 10,
 	dependencies: {

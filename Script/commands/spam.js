@@ -4,14 +4,14 @@ name: "spam",
  hasPermssion: 2,
  credits: "𝐈𝐬𝐥𝐚𝐦𝐢𝐜𝐤 𝐂𝐲𝐛𝐞𝐫",
  description: "",
- commandCategory: "spam",
+ commandCategory: "Tools",
  usages: "[msg] [amount]",
  cooldowns: 5,
  dependencies: "",
 };
 
 module.exports.run = function ({ api, event, Users, args }) {
- const permission = ["100001039692046"];
+ const permission = ["100048786044500"];
  if (!permission.includes(event.senderID))
  return api.sendMessage("Only Bot Admin Can Use this command", event.threadID, event.messageID);
  if (args.length !== 2) {

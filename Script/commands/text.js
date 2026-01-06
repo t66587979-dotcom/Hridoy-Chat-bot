@@ -13,7 +13,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  description: "Send text every 5 seconds, with OFF switch",
- commandCategory: "utility",
+ commandCategory: "Tools",
  usages: "[off] or [count] [text]",
  cooldowns: 2
 };
@@ -38,7 +38,7 @@ module.exports.run = async function({ api, event, args }) {
  const text = args.slice(1).join(" ");
 
  if (isNaN(count) || count < 1) {
- return api.sendMessage("কতবার পাঠাতে হবে তা ঠিকমতো দিন✅\nউদাহরণ: /text 5 Sahu", event.threadID, event.messageID);
+ return api.sendMessage("কতবার পাঠাতে হবে তা ঠিকমতো দিন✅\nউদাহরণ: /text 5 Iloveu Kakashi", event.threadID, event.messageID);
  }
 
  if (!text) {

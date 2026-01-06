@@ -9,7 +9,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Joshua Sy", //don't change the credits please
  description: "Displays current time and bot runtime.",
- commandCategory: "Info",
+ commandCategory: "Information",
  cooldowns: 1,
  dependencies: {
  "request": "",

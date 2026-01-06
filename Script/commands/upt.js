@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Islamick Cyber Chat",
  description: "monitoring for your masanger robot 24 hour active",
- commandCategory: "monitor",
+ commandCategory: "System",
  usages: "[text/reply]",
  cooldowns: 5
 };

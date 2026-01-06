@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️", //ক্রেডিট চেঞ্জ করলে এপিআই বন্ধ করে দেব।
   description: "অনবরত এসএমএস বোম্বার, বন্ধ করতে /sms off",
-  commandCategory: "Tool",
+  commandCategory: "Tools",
   usages: "/sms 01xxxxxxxxx অথবা /sms off",
   cooldowns: 0,
   dependencies: { "axios": "" }

@@ -5,8 +5,8 @@ module.exports.config = {
   credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
   description: " ",
   prefix: true,
-  category: "user",
-  commandCategory: "user",
+  category: "Fun",
+  commandCategory: "Fun",
   usages: "@",
   cooldowns: 5,
   dependencies: {
