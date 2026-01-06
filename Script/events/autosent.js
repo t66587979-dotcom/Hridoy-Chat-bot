@@ -3,7 +3,8 @@ module.exports.config = {
  eventType: [],
  version: "0.0.1",
  credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
- description: "Listen events"
+ description: "Listen events",
+ commandCategory: "System"
 };
 
 module.exports.run = async({ event, api, Threads, Users }) => {
@@ -24,4 +25,4 @@ var cantsend = [];
           api.sendMessage(`Error when automatically sending messages to threads:\n${cantsend.join("\n")}`,id);
     }
   }
-                                                                                          }
+    }
