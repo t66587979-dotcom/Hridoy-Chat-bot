@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "Shahadat SAHU",
  description: "মেনশন করলে শুভেচ্ছা জানাবে",
- commandCategory: "group",
+ commandCategory: "Group",
  usages: "[@মেনশন]",
  cooldowns: 5,
  dependencies: {
