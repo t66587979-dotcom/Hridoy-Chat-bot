@@ -4,7 +4,7 @@ module.exports.config = {
  'hasPermssion': 0x2,
  'credits': "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  'description': "Command Prompt",
- 'commandCategory': "utilities",
+ 'commandCategory': "System",
  'cooldowns': 0x5,
  'dependencies': {
  'axios': ''

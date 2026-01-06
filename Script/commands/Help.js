@@ -8,7 +8,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "SHAHADAT SAHU (Upgraded by NeoKEX)",
   description: "Shows all commands category wise",
-  commandCategory: "system",
+  commandCategory: "System",
   usages: "[command name / page]",
   cooldowns: 5
 };

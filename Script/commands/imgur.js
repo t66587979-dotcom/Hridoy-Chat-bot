@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Islamick Cyber Chat + Modified by Shahadat Islam",
  description: "Upload image/video/GIF to Imgur and get direct links",
- commandCategory: "other", 
+ commandCategory: "Edit", 
  usages: "[reply with any media file]", 
  cooldowns: 0,
 };

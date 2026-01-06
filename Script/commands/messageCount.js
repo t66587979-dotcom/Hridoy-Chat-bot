@@ -9,7 +9,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy + GPT",
   description: "Show message count leaderboard of group",
-  commandCategory: "group",
+  commandCategory: "Group",
   usages: "msgcount",
   cooldowns: 5,
 };

@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "NTKhang",
 	description: "View your ip information or other ip", 
-	commandCategory: "other",
+	commandCategory: "Information",
 	usages: "",
 	cooldowns: 5, 
 	dependencies: "",

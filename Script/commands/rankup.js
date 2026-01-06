@@ -5,7 +5,7 @@ module.exports.config = {
  hasPermssion: 1,
  credits: "Kreysh",
  description: "Announce rankup for each group/user @hiramin ko muna to kreysh thanks ",
- commandCategory: "Edit-IMG",
+ commandCategory: "System",
  dependencies: {
  "fs-extra": ""
  },

@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Create a Pornhub-style comment image ( ͡° ͜ʖ ͡°)",
-  commandCategory: "Edit-img",
+  commandCategory: "Fun",
   usages: "phub [text]",
   cooldowns: 10,
   dependencies: {

@@ -9,7 +9,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝐀𝐌_ ☢️",
   description: "Hug 🥰",
-  commandCategory: "img",
+  commandCategory: "Love",
   usages: "[@mention]",
   cooldowns: 5
 };

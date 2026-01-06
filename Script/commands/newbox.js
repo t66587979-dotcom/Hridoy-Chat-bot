@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 2,
 	credits: "NTKhang",
 	description: "Create a new chat group with the tag", 
- commandCategory: "Box Chat",
+ commandCategory: "Group",
 	usages: '"$newbox [tag] | [New group name] or "$newbox me [tag] | [New group name]"',
 	cooldowns: 5, 
 	dependencies: "",

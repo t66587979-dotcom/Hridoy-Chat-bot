@@ -7,7 +7,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Enhance any image to HD quality",
-  commandCategory: "No Prefix",
+  commandCategory: "Image",
   usages: "Reply to an image with: hd",
   cooldowns: 3,
 };

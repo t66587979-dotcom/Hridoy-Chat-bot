@@ -7,7 +7,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "𝐒𝐡𝐚𝐡𝐚𝐝𝐚𝐭 𝐒𝐀𝐇𝐔",
  description: "Displays all available commands in one page",
- commandCategory: "system",
+ commandCategory: "System",
  usages: "[No args]",
  cooldowns: 5
 };

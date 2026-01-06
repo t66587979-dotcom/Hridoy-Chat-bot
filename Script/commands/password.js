@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Generate a password-style image with two custom texts",
-  commandCategory: "GAME",
+  commandCategory: "Games",
   usages: "[text 1] | [text 2]",
   cooldowns: 10
 };

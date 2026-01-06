@@ -6,7 +6,7 @@ module.exports.config = {
  'hasPermssion': 0x2,
  'credits': "MAHBUB SHAON",
  'description': '',
- 'commandCategory': "sandnoto",
+ 'commandCategory': "Admin",
  'usages': "[msg]",
  'cooldowns': 0x5
 };

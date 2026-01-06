@@ -14,7 +14,7 @@ module.exports = {
     cooldowns: 15,
     hasPermission: 0,
     description: "Generate image using Imagen3 AI",
-    commandCategory: "ai-image",
+    commandCategory: "ai",
     usages: "{pn} <english prompt>"
   },
 

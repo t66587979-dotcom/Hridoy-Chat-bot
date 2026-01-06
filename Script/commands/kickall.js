@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "MAHBUB SHAON",
  description: "Remove all group members.",
- commandCategory: "box chat",
+ commandCategory: "Group",
  usages: "",
  cooldowns: 5
 };

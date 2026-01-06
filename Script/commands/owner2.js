@@ -7,7 +7,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Shahadat SAHU",
  description: "Display bot owner's information",
- commandCategory: "Info",
+ commandCategory: "Information",
  usages: "",
  cooldowns: 5,
  dependencies: {

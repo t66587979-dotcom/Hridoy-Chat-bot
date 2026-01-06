@@ -7,7 +7,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Show the top richest users in the bot economy system",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "leaderboard [count]",
   cooldowns: 5
 };

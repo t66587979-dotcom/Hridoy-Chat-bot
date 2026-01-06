@@ -6,7 +6,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "Shahadat Sahu",
  description: "Join one or all bot groups using number or 'add all'",
- commandCategory: "system",
+ commandCategory: "System",
  usages: "",
  cooldowns: 5
 };

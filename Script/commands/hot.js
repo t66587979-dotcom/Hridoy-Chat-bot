@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "SHAHADAT SAHU",
   description: "hot video",
-  commandCategory: "admin",
+  commandCategory: "nsfw",
   usages: "horny + hot + sex vedio",
   cooldowns: 5,
   dependencies: {

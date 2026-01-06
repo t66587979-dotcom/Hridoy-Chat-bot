@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 2,
   credits: "Hridoy Hossen",
   description: "Reset any user's coin balance (Special ID only)",
-  commandCategory: "economy",
+  commandCategory: "Games",
   usages: "resetmoney @mention / UID",
   cooldowns: 5
 };

@@ -9,7 +9,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐒𝐡𝐚𝐡𝐚𝐝𝐚𝐭 𝐒𝐀𝐇𝐔",
   description: "hug frame generat",
-  commandCategory: "img",
+  commandCategory: "Love",
   usages: "[@mention]",
   cooldowns: 5
 };

@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy + GPT-5",
   description: "ভবিষ্যৎ বলে দেয় একদম হাসতে হাসতে 🤣",
-  commandCategory: "fun",
+  commandCategory: "Fun",
   usages: "predict",
   cooldowns: 5,
 };

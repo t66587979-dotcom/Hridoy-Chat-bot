@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0, // 🔓 Public command
   credits: "Hridoy Khan + GPT Hellfire Upgrade 🔥",
   description: "Give a full-cooked, deadly funny roast 😈",
-  commandCategory: "fun",
+  commandCategory: "Fun",
   usages: "roast [@tag or name]",
   cooldowns: 5,
 };

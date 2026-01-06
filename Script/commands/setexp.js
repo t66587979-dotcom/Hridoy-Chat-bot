@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 2,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "change the expien of yourself or the person being tagged",
-	commandCategory: "system",
+	commandCategory: "System",
 	usages: "setexp [Tag]",
 	cooldowns: 5,
 	info: [
