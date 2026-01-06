@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Hossen",
   description: "Spin the slot machine to win or lose coins",
-  commandCategory: "games",
+  commandCategory: "Games",
   usages: "slot <bet amount>",
   cooldowns: 5
 };
