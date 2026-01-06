@@ -4,13 +4,13 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy (100048786044500)",
   description: "Bot will reply when someone tags any of the admins",
-  commandCategory: "Other",
+  commandCategory: "System",
   usages: "@",
   cooldowns: 1
 };
 
 module.exports.handleEvent = function ({ api, event }) {
-  const adminIDs = ["61575698041722", "100048786044500", "61576394315037"].map(String);
+  const adminIDs = ["100001162111551", "100048786044500", "61576394315037"].map(String);
 
   if (adminIDs.includes(String(event.senderID))) return;
 

@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "Shahadat SA HU",
  description: "Get Facebook UID and profile links",
- commandCategory: "Tools",
+ commandCategory: "Tool",
  cooldowns: 5
 };
 

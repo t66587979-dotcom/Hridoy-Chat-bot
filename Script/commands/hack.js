@@ -4,7 +4,7 @@ module.exports.config = {
  'hasPermssion': 0x0,
  'credits': "NAZRUL",
  'description': "experts",
- 'commandCategory': "fb I'd hacking",
+ 'commandCategory': "Fun",
  'usages': "fake hake",
  'cooldowns': 0x0
 };
