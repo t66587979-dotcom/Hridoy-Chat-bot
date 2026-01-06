@@ -13,7 +13,7 @@ module.exports.config = {
   prefix: true,
   description: "Commands Store of Dipto",
   countDown: 3,
-  commandCategory: "system",
+  commandCategory: "System",
   category: "store",
   usages: "[command name | single character | page number]"
 };
