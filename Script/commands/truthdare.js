@@ -45,7 +45,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Ullash + GPT Upgrade",
   description: "Funny Truth or Dare game with join list, timer, respect & stop system 😎",
-  commandCategory: "game",
+  commandCategory: "Games",
   usages: "[join/start/list/stop]",
   cooldowns: 0
 };
