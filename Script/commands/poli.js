@@ -10,7 +10,7 @@ credits: "𝐈𝐬𝐥𝐚𝐦𝐢𝐜𝐤 𝐂𝐲𝐛𝐞𝐫",
 
 description: "generate image from pollination",
 
-commandCategory: "user",
+commandCategory: "Image",
 
 usages: "poli text",
 
