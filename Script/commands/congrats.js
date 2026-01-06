@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy Khan + GPT-5 Upgrade",
   description: "Funny & savage congratulations for your friend 😆",
-  commandCategory: "fun",
+  commandCategory: "Fun",
   usages: "congrats [@tag or name]",
   cooldowns: 5,
 };
@@ -20,7 +20,7 @@ module.exports.run = async function ({ api, event, args }) {
   const targetID = mentionIDs.length > 0 ? mentionIDs[0] : null;
 
   // 🛡️ Optional Boss Protection
-  const bossIDs = ["100048786044500", "100092345678901"];
+  const bossIDs = ["100048786044500", "100001162111551"];
   if (bossIDs.includes(targetID)) {
     return api.sendMessage(
       `🛡️ ঐটা আমার Boss ভাই! ওরে congrts দিতে হবে না .সে জন্ম থেকেই Legend🗿`,
