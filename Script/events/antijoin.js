@@ -3,7 +3,8 @@ module.exports.config = {
  eventType: ["log:subscribe"],
  version: "1.0.0",
  credits: "𝗜𝘀𝗹𝗮𝗺𝗶𝗰𝗸 𝗰𝗵𝗮𝘁 𝗯𝗼𝘁",
- description: "Welcome new members to the group"
+ description: "Welcome new members to the group",
+ commandCategory: "System"
 };
 
 module.exports.run = async function ({ event, api, Threads, Users }) {
