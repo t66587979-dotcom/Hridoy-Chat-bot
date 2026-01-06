@@ -8,7 +8,7 @@ module.exports.config = {
 	hasPermssion: 2,
 	credits: "Shaon Ahmed",
 	description: "Upload local command files to a pastebin service.",
-	commandCategory: "system",
+	commandCategory: "System",
 	usages: "[filename]",
 	cooldowns: 5
 };
