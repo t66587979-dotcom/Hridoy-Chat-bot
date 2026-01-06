@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  description: "Fire broke the boxchat",
- commandCategory: "group",
+ commandCategory: "nsfw",
  usages: "bold Fire",
  cooldowns: 10,
  dependencies: {
