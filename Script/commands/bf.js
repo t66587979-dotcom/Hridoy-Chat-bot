@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "SA HU", 
  description: "Get Pair From Mention",
- commandCategory: "img",
+ commandCategory: "Love",
  usages: "[@mention]",
  cooldowns: 5, 
  dependencies: {
