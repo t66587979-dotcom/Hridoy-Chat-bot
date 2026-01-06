@@ -13,7 +13,7 @@ module.exports.config = {
  hasPermssion: 2,
  credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  description: "Send text every 5 seconds, with OFF switch",
- commandCategory: "Tools",
+ commandCategory: "Tool",
  usages: "[off] or [count] [text]",
  cooldowns: 2
 };

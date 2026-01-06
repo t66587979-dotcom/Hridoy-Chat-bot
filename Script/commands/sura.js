@@ -5,7 +5,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Islamick Chat",
   description: "প্রিয় মুসলিম ভাই ও বন তুমাদের জন্য সূরা নিয়ে আসলাম",
-  commandCategory: "M H BD",
+  commandCategory: "Media",
   usages: "sura",
   cooldowns: 5,
   dependencies: {

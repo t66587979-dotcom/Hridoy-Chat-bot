@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "See weather information in the area",
-	commandCategory: "other",
+	commandCategory: "information",
 	usages: "[Location]",
 	cooldowns: 5,
 	dependencies: {

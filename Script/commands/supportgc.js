@@ -6,7 +6,7 @@ module.exports.config = {
  hasPermission: 0,
  description: "Join the official support group chat",
  usePrefix: true,
- commandCategory: "General",
+ commandCategory: "System",
  usage: "supportgc",
 };
 
