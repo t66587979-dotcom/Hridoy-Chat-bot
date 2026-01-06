@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "𝐇𝐑𝐈𝐃𝐎𝐘 𝐇𝐎𝐒𝐒𝐄𝐍",
   description: "Adopt, train & battle monsters with Economy sync 🐾",
-  commandCategory: "games",
+  commandCategory: "Games",
   usages: "[buy/train/battle]",
   cooldowns: 5
 };
