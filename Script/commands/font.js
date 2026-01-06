@@ -4,7 +4,7 @@ module.exports.config = {
   'hasPermssion': 0,
   'credits': "Nozrul",
   'description': "Converts text into any Font",
-  'commandCategory': "Tools",
+  'commandCategory': "Tool",
   'usages': "<fontType> <input>",
   'cooldowns': 5
 };

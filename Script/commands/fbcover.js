@@ -9,7 +9,7 @@ module.exports.config = {
  'hasPermission': 0x0,
  'credits': "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  'description': "Facebook cover",
- 'commandCategory': " cover",
+ 'commandCategory': " Image",
  'usages': "name - title - address - email - phone - color (default = white)",
  'cooldowns': 0x5
 };

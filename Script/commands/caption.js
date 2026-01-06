@@ -6,7 +6,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "SHAHADAT SAHU",
   description: "random caption",
-  commandCategory: "caption",
+  commandCategory: "Love",
   usages: "caption",
   cooldowns: 5
 };

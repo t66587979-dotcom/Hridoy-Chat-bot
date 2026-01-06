@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 0,
     credits: "MrTomXxX",
     description: "Search results on Google!",
-    commandCategory: "Tools",
+    commandCategory: "Tool",
     usages: "google [Text]",
     cooldowns: 5,
     dependencies: {

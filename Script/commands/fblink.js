@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "Shahadat SAHU",
 	description: "Get linkfb.",
-	commandCategory: "Generate FB id link",
+	commandCategory: "Tool",
 	cooldowns: 5
 };
 

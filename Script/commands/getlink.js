@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "Get the URL Download from Video, Audio is sent from the group",
-	commandCategory: "Tools",
+	commandCategory: "Tool",
 	usages: "getLink",
 	cooldowns: 5,
 };

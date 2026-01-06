@@ -6,7 +6,7 @@ module.exports.config = {
 	hasPermssion: 1,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
 	description: "View your box information",
-	commandCategory: "Box", 
+	commandCategory: "Group", 
 	usages: "groupinfo", 
 	cooldowns: 0,
 	dependencies: [] 

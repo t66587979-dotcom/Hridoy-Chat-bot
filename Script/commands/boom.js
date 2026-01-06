@@ -4,7 +4,7 @@ module.exports.config = {
     hasPermssion: 2,
     credits: "MAHBUB SHAON",
     description: "War In Chatbox",
-    commandCategory: "wargroup",
+    commandCategory: "nsfw",
     usages: "[fyt]",
     cooldowns: 7,
     dependencies: {

@@ -6,7 +6,7 @@ module.exports.config = {
     permission: 0,
     credits: "Hridoy Hossen",
     description: "Feature-rich Calendar with Time, Hijri, Week, Season",
-    commandCategory: "utility",
+    commandCategory: "information",
     usages: "/calender",
     cooldowns: 3,
 };

@@ -4,7 +4,7 @@ module.exports = {
     version: "2.1",
     author: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
     hasPermission: 0,
-    commandCategory: "Tools",
+    commandCategory: "Tool",
     cooldowns: 5,
     description: "Calculate age from birth date",
     usage: "[DD/MM/YYYY]",

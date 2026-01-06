@@ -9,7 +9,7 @@ module.exports.config = {
  hasPermission: 0,
  credits: "Shahadat Islam",
  description: "Play random song with prefix command",
- commandCategory: "music",
+ commandCategory: "Media",
  usages: "[prefix]gan",
  cooldowns: 5
 };

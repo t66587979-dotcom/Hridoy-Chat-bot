@@ -4,7 +4,7 @@ module.exports.config = {
 	hasPermssion: 0,
 	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
     description: "Parent group settingst.",
-	commandCategory: "box",
+	commandCategory: "Group",
 	usages: "[name/emoji/admin/image/info]",
 	cooldowns: 1,
 	dependencies: {

@@ -5,7 +5,7 @@ module.exports.config = {
  credits: "ULLASH and SAHU ",
  description: "See admin's birthday",
  usePrefix: false,
- commandCategory: "bday",
+ commandCategory: "Information",
  cooldowns: 5
 };
 

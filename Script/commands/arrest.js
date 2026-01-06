@@ -4,7 +4,7 @@ module.exports.config = {
  hasPermssion: 0,
  credits: "CYBER ☢️_𖣘 -BOT ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
  description: "Arrest a friend you mention",
- commandCategory: "tagfun",
+ commandCategory: "Fun",
  usages: "[mention]",
  cooldowns: 2,
  dependencies: {
