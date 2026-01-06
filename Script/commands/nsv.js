@@ -4,7 +4,7 @@ module.exports.config = {
   hasPermssion: 0,
   credits: "Hridoy + GPT Upgrade",
   description: "NSV Info Menu (Details, Rules, Ranking, Group Link)",
-  commandCategory: "info",
+  commandCategory: "Information",
   usages: "[nsv]",
   cooldowns: 3
 };
