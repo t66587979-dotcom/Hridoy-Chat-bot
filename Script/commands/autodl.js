@@ -5,7 +5,7 @@ module.exports = {
  hasPermssion: 0,
  credits: "SHAON",
  description: "auto video download",
- commandCategory: "user",
+ commandCategory: "Tool",
  usages: "",
  cooldowns: 5,
 },
