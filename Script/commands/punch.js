@@ -4,17 +4,13 @@ const path = require("path");
 
 module.exports.config = {
   name: "punch",
-  version: "1.0.1",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "Kaneki (Improved by Grok)",
-  description: "ট্যাগ করা ফ্রেন্ডকে পাঞ্চ করো 👊 (অ্যানিমেটেড GIF)",
-  commandCategory: "game",
-  usages: "punch @কেউ",
-  cooldowns: 5,
-  dependencies: {
-    "axios": "",
-    "fs-extra": ""
-  }
+  credits: "Kaneki + Fixed by ChatGPT",
+  description: "Tag করা বন্ধুকে punch দাও 👊 (GIF)",
+  commandCategory: "fun",
+  usages: "punch @user",
+  cooldowns: 5
 };
 
 const punchGifs = [
@@ -25,35 +21,52 @@ const punchGifs = [
 ];
 
 module.exports.run = async function ({ api, event }) {
-  const { threadID, messageID } = event;
+  const { threadID, messageID, mentions } = event;
 
-  const mentions = Object.keys(event.mentions);
-  if (mentions.length === 0) {
-    return api.sendMessage("⚠️ কাউকে @ট্যাগ করো যাকে পাঞ্চ করতে চাও!", threadID, messageID);
+  if (!mentions || Object.keys(mentions).length === 0) {
+    return api.sendMessage(
+      "⚠️ কাউকে @tag করো যাকে punch দিতে চাও!",
+      threadID,
+      messageID
+    );
   }
 
-  const partnerID = mentions[0];
-  let partnerName = event.mentions[partnerID].replace("@", "");
+  const targetID = Object.keys(mentions)[0];
+  const targetName = mentions[targetID].replace("@", "");
+
+  const cacheDir = path.join(__dirname, "cache");
+  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
+
+  const gifLink = punchGifs[Math.floor(Math.random() * punchGifs.length)];
+  const gifPath = path.join(cacheDir, `punch_${Date.now()}.gif`);
 
   try {
-    // লোডিং মেসেজ
-    await api.sendMessage("পাঞ্চ লোড হচ্ছে... 👊💥", threadID, messageID);
+    const loading = await api.sendMessage("👊 Punch লোড হচ্ছে...", threadID);
 
-    const randomGif = punchGifs[Math.floor(Math.random() * punchGifs.length)];
-    const cachePath = path.join(__dirname, "cache", `punch_${Date.now()}.gif`);
+    const res = await axios.get(gifLink, {
+      responseType: "arraybuffer",
+      headers: { "User-Agent": "Mozilla/5.0" },
+      timeout: 15000
+    });
 
-    const response = await axios.get(randomGif, { responseType: "arraybuffer", timeout: 10000 });
+    fs.writeFileSync(gifPath, res.data);
 
-    fs.writeFileSync(cachePath, Buffer.from(response.data));
+    await api.sendMessage(
+      {
+        body: `💥 ${targetName} কে জোরে একটা punch মারা হলো! 👊`,
+        mentions: [{ tag: targetName, id: targetID }],
+        attachment: fs.createReadStream(gifPath)
+      },
+      threadID,
+      () => {
+        fs.unlinkSync(gifPath);
+        api.unsendMessage(loading.messageID);
+      },
+      messageID
+    );
 
-    await api.sendMessage({
-      body: `${partnerName} got punched by you! 👊💥`,
-      mentions: [{ tag: partnerName, id: partnerID }],
-      attachment: fs.createReadStream(cachePath)
-    }, threadID, () => fs.unlinkSync(cachePath), messageID);
-
-  } catch (error) {
-    console.error("Punch GIF error:", error.message);
-    api.sendMessage("GIF লোড করতে সমস্যা হয়েছে 😔 আবার ট্রাই করো!", threadID, messageID);
+  } catch (err) {
+    console.log("Punch error:", err.message);
+    api.sendMessage("❌ GIF পাঠানো যায়নি, আবার চেষ্টা করো।", threadID, messageID);
   }
 };
