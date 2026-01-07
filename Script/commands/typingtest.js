@@ -24,9 +24,7 @@ module.exports.run = async function ({ api, event }) {
 
     // ফাইনাল মেসেজ পাঠানো
     await api.sendMessage(
-      "𝐭𝐮𝐦𝐚𝐤𝐞 𝐚𝐦𝐢 𝐫𝐚𝐢𝐭𝐞 𝐯𝐚𝐥𝐨𝐩𝐚𝐬𝐢 ✨\n\n" +
-      "টাইপিং অ্যানিমেশন টেস্ট সফল! 😎\n" +
-      "(১০ সেকেন্ড ধরে \"typing...\" দেখিয়েছে)",
+      "𝐭𝐮𝐦𝐚𝐤𝐞 𝐚𝐦𝐢 𝐫𝐚𝐢𝐭𝐞 𝐯𝐚𝐥𝐨𝐩𝐚𝐬𝐢 ✨"
       threadID, messageID
     );
 
