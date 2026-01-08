@@ -3,51 +3,46 @@ const fs = require('fs-extra');
 
 module.exports.config = {
   name: "hd",
-  version: "2.5",
+  version: "2.2",
   hasPermssion: 0,
-  credits: "Hridoy Hossen",
-  description: "Enhance any image to HD quality",
-  commandCategory: "Image",
-  usages: "Reply to an image with: hd",
-  cooldowns: 3,
+  credits: "Islamick Chat",
+  description: "hd",
+  commandCategory: "no prefix",
+  usages: "Reply to a photo to enhance image ",
+  cooldowns: 2,
 };
 
 module.exports.handleEvent = async function ({ api, event }) {
-  const { threadID, messageID, messageReply, body } = event;
-  if (!body || !body.toLowerCase().startsWith("hd")) return;
+  if (!(event.body.indexOf("hd") === 0 || event.body.indexOf("Hd") === 0)) return;
+  const args = event.body.split(/\s+/);
+  args.shift();
 
-  const imageUrl = messageReply?.attachments?.[0]?.url;
-  const cachePath = __dirname + "/cache/hd_result.jpg";
+  const pathie = __dirname + `/cache/zombie.jpg`;
+  const { threadID, messageID } = event;
 
-  if (!imageUrl) {
-    return api.sendMessage(
-      "🌺 **HD করতে হলে ছবিটিতে রিপ্লাই দিন**\n\n📸 উদাহরণ:\n👉 ছবিতে রিপ্লাই করে লিখুন: hd",
-      threadID,
-      messageID
-    );
+  const photoUrl = event.messageReply.attachments[0] ? event.messageReply.attachments[0].url : args.join(" ");
+
+  if (!photoUrl) {
+    api.sendMessage("•┄┅════❁🌺❁════┅┄•\n\nআসসালামু আলাইকুম-!!🖤💫\nআপনি যেই ছবি HD করতে চান সেই ছবি টি দিয়ে রিপ্লাই sms দিন\n\n•┄┅════❁🌺❁════┅┄•", threadID, messageID);
+    return;
   }
 
-  api.sendMessage("🕐 আপনার ছবি HD করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", threadID, async () => {
+  api.sendMessage("╭•┄┅════❁🌺❁════┅┄•╮\n\n অপেক্ষা করুন আপনার  ছোবি টি HD তে রুপান্তরিত করা হচ্ছে-!!⌛\n\n╰•┄┅════❁🌺❁════┅┄•╯", threadID, async () => {
     try {
-      const apiURL = `https://code-merge-api-hazeyy01.replit.app/api/try/remini?url=${encodeURIComponent(imageUrl)}`;
-      const response = await axios.get(apiURL);
+      const response = await axios.get(`https://code-merge-api-hazeyy01.replit.app/api/try/remini?url=${encodeURIComponent(photoUrl)}`);
+      const processedImageURL = response.data.image_data;
+      const img = (await axios.get(processedImageURL, { responseType: "arraybuffer" })).data;
 
-      if (!response.data?.image_data)
-        return api.sendMessage("⚠️ HD conversion ব্যর্থ হয়েছে! অনুগ্রহ করে পরে চেষ্টা করুন।", threadID, messageID);
-
-      const imageBuffer = (await axios.get(response.data.image_data, { responseType: "arraybuffer" })).data;
-      fs.writeFileSync(cachePath, Buffer.from(imageBuffer, 'binary'));
+      fs.writeFileSync(pathie, Buffer.from(img, 'binary'));
 
       api.sendMessage({
-        body: "✅ আপনার ছবি সফলভাবে HD তে রূপান্তরিত হয়েছে!",
-        attachment: fs.createReadStream(cachePath)
-      }, threadID, () => fs.unlinkSync(cachePath), messageID);
-
+        body: "╭•┄┅════❁🌺❁════┅┄•╮\n\nআপনার ছবি টি HD তে  পরিবর্তন করা হলো\n\n╰•┄┅════❁🌺❁════┅┄•╯",
+        attachment: fs.createReadStream(pathie)
+      }, threadID, () => fs.unlinkSync(pathie), messageID);
     } catch (error) {
-      console.error(error);
-      api.sendMessage("❌ Error: ছবি প্রক্রিয়া করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।", threadID, messageID);
+      api.sendMessage(` 𝖤𝗋𝗋𝗈𝗋 𝗉𝗋𝗈𝖼𝖾𝗌𝗌𝗂𝗇𝗀 𝗂𝗆𝖺𝗀𝖾: ${error}`, threadID, messageID);
     }
   });
 };
 
-module.exports.run = async function () { };
+module.exports.run = async function ({ api, event }) {};
