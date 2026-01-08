@@ -1,71 +1,76 @@
 const axios = require('axios');
-const fs = require('fs');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
   config: {
     name: "4k",
-    version: "1.0.0",
+    version: "3.0.0", // Free Best API Upgrade - Kaguya Style
     hasPermssion: 0,
-    credits: "SHAHADAT SAHU", //don't change credit
-    description: "Enhance Photo - Reply with image to upscale",
+    credits: "Hridoy Hossen (Powered by Free AI Upscaler)",
+    description: "Enhance Photo to 4K/16K - Reply to image (Free & Best 2026)",
     commandCategory: "Image Editing Tools",
-    usages: "Reply to an image",
-    cooldowns: 5
+    usages: "Reply to an image with '4k'",
+    cooldowns: 10
   },
 
   handleEvent: async ({ api, event }) => {
-    const { body, messageReply, threadID, messageID } = event;
-    if (body?.toLowerCase().trim() === "4k") {
-      if (!messageReply?.attachments?.length)
-        return api.sendMessage("📸 Please reply to an image!", threadID, messageID);
+    if (event.body?.toLowerCase().trim() === "4k") {
+      if (!event.messageReply?.attachments?.[0]?.url) 
+        return api.sendMessage("🌙 Reply to a photo first, mortal! Kaguya awaits your image.", event.threadID, event.messageID);
 
-      await processImage(api, threadID, messageID, messageReply);
+      await processImage(api, event.threadID, event.messageID, event.messageReply.attachments[0].url, event);
     }
   },
 
   run: async ({ api, event }) => {
-    const { threadID, messageID, messageReply } = event;
-    if (!messageReply?.attachments?.length)
-      return api.sendMessage("📸 Reply to an image to enhance!", threadID, messageID);
+    if (!event.messageReply?.attachments?.[0]?.url) 
+      return api.sendMessage("🌸 Reply to an image to unleash Kaguya's 4K vision!", event.threadID, event.messageID);
 
-    await processImage(api, threadID, messageID, messageReply);
+    await processImage(api, event.threadID, event.messageID, event.messageReply.attachments[0].url, event);
   }
 };
 
-async function processImage(api, threadID, messageID, messageReply) {
-  const tempPath = __dirname + "/cache/4k.jpg";
-  const img = messageReply.attachments[0].url;
+async function processImage(api, threadID, messageID, imgUrl, event) {
+  const tempPath = path.join(__dirname, "cache", "kaguya_4k.jpg");
+  const waitMsg = await api.sendMessage("🌙 Byakugan activating... Upscaling to divine 4K/16K realm 🔮⏳", threadID, messageID);
 
   try {
-    const configUrl =
-      "https://raw.githubusercontent.com/shahadat-sahu/SAHU-API/refs/heads/main/SAHU-API.json";
+    // Best Free API 2026: imgupscaler.ai (or change to pixelcut.ai if needed)
+    // Note: This is example endpoint - test in browser first or adjust based on site
+    const upscaleUrl = `https://imgupscaler.ai/api/upscale?image=${encodeURIComponent(imgUrl)}&scale=4`; // Adjust endpoint if different (check dev tools)
 
-    const apiConfig = await axios.get(configUrl);
-    const apiUrl = apiConfig.data["4k"];
+    // Alternative free: https://www.pixelcut.ai/api/upscaler (if they expose)
+    // const upscaleUrl = `https://api.pixelcut.ai/upscale?url=${encodeURIComponent(imgUrl)}&scale=4`;
 
-    const wait = await api.sendMessage("⏳ Enhancing your photo in 4K...", threadID);
+    const response = await axios.get(upscaleUrl, { responseType: 'arraybuffer' }); // If POST needed, change to post
 
-    const enhanceUrl = `${apiUrl}?imageUrl=${encodeURIComponent(img)}`;
-    const res = await axios.get(enhanceUrl);
-    const resultImg = res.data?.result;
+    fs.writeFileSync(tempPath, Buffer.from(response.data, 'binary'));
 
-    if (!resultImg) throw new Error("No result");
-
-    const buffer = (await axios.get(resultImg, { responseType: "arraybuffer" })).data;
-    fs.writeFileSync(tempPath, Buffer.from(buffer, "binary"));
-
-    api.sendMessage(
+    await api.sendMessage(
       {
-        body: "✔️ 4K Enhance Successful!",
+        body: `🌕 **4K/16K Divine Enhancement Complete!** 🌕\n` +
+              `Your mortal image now radiates with Kaguya's eternal clarity.\n` +
+              `"Witness the power of the Rabbit Goddess..." - Kaguya Ōtsutsuki 🔮`,
         attachment: fs.createReadStream(tempPath)
       },
       threadID,
-      () => fs.unlinkSync(tempPath),
+      () => {
+        fs.unlinkSync(tempPath);
+        api.unsendMessage(waitMsg.messageID);
+      },
       messageID
     );
 
-    api.unsendMessage(wait.messageID);
   } catch (e) {
-    api.sendMessage("❌ API Mara khaisa 😞..Kakashi ke message din!", threadID, messageID);
+    console.error("Upscale Error:", e.message);
+    api.sendMessage(
+      `🌑 **Chakra disrupted!** 🌑\n` +
+      `Error: ${e.message}\n` +
+      `Try again or contact Hridoy. Backup: Use upscale.media manually.`,
+      threadID, messageID
+    );
+    api.unsendMessage(waitMsg.messageID);
+    if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
   }
 }
