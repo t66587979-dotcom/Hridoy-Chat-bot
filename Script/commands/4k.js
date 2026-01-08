@@ -1,17 +1,18 @@
 const axios = require('axios');
 const fs = require('fs-extra');
 const path = require('path');
+const FormData = require('form-data'); // npm install form-data দিয়ে ইনস্টল করো যদি না থাকে
 
 module.exports = {
   config: {
     name: "4k",
-    version: "3.0.0", // Free Best API Upgrade - Kaguya Style
+    version: "4.1.0", // Your API Key Integrated - Kaguya Style
     hasPermssion: 0,
-    credits: "Hridoy Hossen (Powered by Free AI Upscaler)",
-    description: "Enhance Photo to 4K/16K - Reply to image (Free & Best 2026)",
+    credits: "Hridoy Hossen (Powered by Pixelcut AI - Your Key)",
+    description: "Enhance Photo to 4K - Reply to image (Using Your Pixelcut Key)",
     commandCategory: "Image Editing Tools",
     usages: "Reply to an image with '4k'",
-    cooldowns: 10
+    cooldowns: 15
   },
 
   handleEvent: async ({ api, event }) => {
@@ -33,25 +34,39 @@ module.exports = {
 
 async function processImage(api, threadID, messageID, imgUrl, event) {
   const tempPath = path.join(__dirname, "cache", "kaguya_4k.jpg");
-  const waitMsg = await api.sendMessage("🌙 Byakugan activating... Upscaling to divine 4K/16K realm 🔮⏳", threadID, messageID);
+  const waitMsg = await api.sendMessage("🌙 Byakugan activating... Upscaling to 4K realm 🔮⏳", threadID, messageID);
 
   try {
-    // Best Free API 2026: imgupscaler.ai (or change to pixelcut.ai if needed)
-    // Note: This is example endpoint - test in browser first or adjust based on site
-    const upscaleUrl = `https://imgupscaler.ai/api/upscale?image=${encodeURIComponent(imgUrl)}&scale=4`; // Adjust endpoint if different (check dev tools)
+    // তোমার API Key এখানে
+    const PIXELCUT_API_KEY = "sk_557563e7479f4c0ba34457b902e09024";
 
-    // Alternative free: https://www.pixelcut.ai/api/upscaler (if they expose)
-    // const upscaleUrl = `https://api.pixelcut.ai/upscale?url=${encodeURIComponent(imgUrl)}&scale=4`;
+    // Pixelcut Upscale Endpoint (অফিশিয়াল docs থেকে: https://api.developer.pixelcut.ai/v1/upscale)
+    const upscaleUrl = "https://api.developer.pixelcut.ai/v1/upscale";
 
-    const response = await axios.get(upscaleUrl, { responseType: 'arraybuffer' }); // If POST needed, change to post
+    // Messenger-এর ইমেজ URL থেকে বাইনারি ডাটা নেয়া
+    const imageResponse = await axios.get(imgUrl, { responseType: 'arraybuffer' });
+    const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+
+    const form = new FormData();
+    form.append('image', imageBuffer, { filename: 'input.jpg' });
+    form.append('scale', '4'); // 2 বা 4 (4x upscale)
+
+    const response = await axios.post(upscaleUrl, form, {
+      headers: {
+        ...form.getHeaders(),
+        'Authorization': `Bearer ${PIXELCUT_API_KEY}`
+      },
+      responseType: 'arraybuffer' // এনহ্যান্সড ইমেজ বাইনারি হিসেবে আসবে
+    });
 
     fs.writeFileSync(tempPath, Buffer.from(response.data, 'binary'));
 
     await api.sendMessage(
       {
-        body: `🌕 **4K/16K Divine Enhancement Complete!** 🌕\n` +
-              `Your mortal image now radiates with Kaguya's eternal clarity.\n` +
-              `"Witness the power of the Rabbit Goddess..." - Kaguya Ōtsutsuki 🔮`,
+        body: `🌕 **4K Divine Enhancement Complete!** 🌕\n` +
+              `Your image now radiates with Kaguya's eternal clarity.\n` +
+              `"Witness the power of the Rabbit Goddess..." - Kaguya Ōtsutsuki 🔮\n\n` +
+              `Powered by your Kakashi.`,
         attachment: fs.createReadStream(tempPath)
       },
       threadID,
@@ -63,11 +78,12 @@ async function processImage(api, threadID, messageID, imgUrl, event) {
     );
 
   } catch (e) {
-    console.error("Upscale Error:", e.message);
+    console.error("4K Pixelcut Error:", e.message, e.response ? e.response.data.toString() : 'No response');
     api.sendMessage(
       `🌑 **Chakra disrupted!** 🌑\n` +
-      `Error: ${e.message}\n` +
-      `Try again or contact Hridoy. Backup: Use upscale.media manually.`,
+      `Error: ${e.message} (Possible: Invalid key, rate limit, or API issue)\n` +
+      `Check console for details. Try a smaller image or contact Pixelcut support.\n` +
+      `Backup: Use upscale.media or letsenhance.io manually.`,
       threadID, messageID
     );
     api.unsendMessage(waitMsg.messageID);
