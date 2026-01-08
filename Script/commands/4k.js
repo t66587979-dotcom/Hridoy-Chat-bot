@@ -66,6 +66,6 @@ async function processImage(api, threadID, messageID, messageReply) {
 
     api.unsendMessage(wait.messageID);
   } catch (e) {
-    api.sendMessage("❌ API Error! Boss SAHU ke message din!", threadID, messageID);
+    api.sendMessage("❌ API Mara khaisa 😞..Kakashi ke message din!", threadID, messageID);
   }
 }
